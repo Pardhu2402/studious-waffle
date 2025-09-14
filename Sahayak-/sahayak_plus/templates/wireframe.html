@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 1200px; margin: 2em auto; padding: 1.5em; background: #fff; border: 2.5px dashed #bbb; border-radius: 18px; font-family: Arial, sans-serif;">
+  <div style="text-align:center; font-size:1.1em; color:#888; margin-bottom:1.5em; font-style:italic;">Wireframe: Combines real UI and planned features for demo only.</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 2em; justify-content: center;">
+    <!-- Dashboard/Main Menu (real UI look) -->
+    <div style="flex:1 1 320px; min-width:300px; max-width:340px; background:#f9f9f7; border:2px solid #bbb; border-radius:16px; padding:1em; margin-bottom:1em;">
+      <div style="font-weight:bold; text-align:center; margin-bottom:0.7em;">Dashboard / Main Menu</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">🎤 Voice/Text Input</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📚 Content Generator</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📝 Worksheet Maker</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📊 Analytics</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">👥 Social Feed</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">👪 Parent/Guardian Updates</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">⚙️ Settings</div>
+    </div>
+    <!-- Worksheet/Content Generation (real UI look) -->
+    <div style="flex:1 1 320px; min-width:300px; max-width:340px; background:#f9f9f7; border:2px solid #bbb; border-radius:16px; padding:1em; margin-bottom:1em;">
+      <div style="font-weight:bold; text-align:center; margin-bottom:0.7em;">Worksheet Generator</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">🖼️ Upload Textbook Photo</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">🔍 Select Grade & Subject</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">🤖 AI Suggests Questions</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📄 Preview Worksheet</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">⬇️ Download as PDF</div>
+    </div>
+    <!-- Social Feed/Community (real UI look) -->
+    <div style="flex:1 1 320px; min-width:300px; max-width:340px; background:#f9f9f7; border:2px solid #bbb; border-radius:16px; padding:1em; margin-bottom:1em;">
+      <div style="font-weight:bold; text-align:center; margin-bottom:0.7em;">Social Feed / Community</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">👩‍🏫 "Explain water cycle in Telugu" <span style="float:right;">👍 💬</span></div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">👨‍🏫 "Math games for multi-grade" <span style="float:right;">👍 💬</span></div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">➕ Post Your Prompt</div>
+    </div>
+    <!-- Profile/Analytics (real UI look) -->
+    <div style="flex:1 1 320px; min-width:300px; max-width:340px; background:#f9f9f7; border:2px solid #bbb; border-radius:16px; padding:1em; margin-bottom:1em;">
+      <div style="font-weight:bold; text-align:center; margin-bottom:0.7em;">Profile / Analytics</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">👩‍🏫 Mrs. Kavitha</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">🏫 Govt School, Vizag</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📈 Worksheets Created: 133</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">🏅 Badges: Worksheet Wizard, Language Pro</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📊 Analytics: Usage, Engagement</div>
+    </div>
+    <!-- Wireframe: Parent/Guardian Notification -->
+    <div style="flex:1 1 320px; min-width:300px; max-width:340px; background:#f6f6f2; border:2.5px dashed #888; border-radius:16px; padding:1em; margin-bottom:1em;">
+      <div style="font-weight:bold; text-align:center; margin-bottom:0.7em; color:#555;">Wireframe: Parent/Guardian Notification</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">👩‍🏫 Teacher sends update</div>
+      <div style="text-align:center; font-size:1.3em; color:#6c63ff;">⬇️</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; margin-bottom:0.7em; color:#222;">📲 Google Classroom API</div>
+      <div style="text-align:center; font-size:1.3em; color:#6c63ff;">⬇️</div>
+      <div style="border:1.5px dashed #bbb; border-radius:8px; background:#fff; padding:0.7em 1em; color:#222;">👪 Parent/Guardian receives SMS/Email</div>
+    </div>
+    <!-- Wireframe: Agentic Mesh Overview -->
+    <div style="flex:1 1 320px; min-width:300px; max-width:340px; background:#f6f6f2; border:2.5px dashed #888; border-radius:16px; padding:1em; margin-bottom:1em;">
+      <div style="font-weight:bold; text-align:center; margin-bottom:0.7em; color:#555;">Wireframe: Agentic Mesh Overview</div>
+      <div style="text-align:center;">
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Content Agent</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Feedback Agent</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Timetable Agent</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Social Agent</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Wellbeing Agent</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Integration Agent</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Peer Facilitator</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">NEP Compliance</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Parental Engagement</span>
+        <span style="display:inline-block; border:1.5px dashed #6c63ff; background:#f3f2fd; border-radius:8px; padding:0.5em 0.7em; margin:0.2em; color:#222;">Assessment</span>
+      </div>
+      <div style="margin-top:1em; text-align:center; color:#6c63ff; font-size:0.98em;">All agents share data and support each other in real time</div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

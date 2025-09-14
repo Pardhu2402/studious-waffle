@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-xl mx-auto py-8">
+  <h1 class="text-2xl font-bold text-center mb-4">🗣️ Native Speech Generation</h1>
+  <form id="tts-form">
+    <textarea id="tts-text" rows="2" class="w-full p-2 rounded mb-2" placeholder="Enter text to speak"></textarea>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Generate Speech</button>
+  </form>
+  <audio id="tts-audio" controls class="mt-2 w-full" style="display:none;"></audio>
+  <div id="tts-result" class="mt-2 text-xs text-gray-300"></div>
+</div>
+<script>
+document.getElementById('tts-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const text = document.getElementById('tts-text').value;
+  const response = await fetch('/gemini/text-to-speech', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+  if (response.ok) {
+    const audio = document.getElementById('tts-audio');
+    audio.src = '/static/demo_audio.mp3'; // Use static for mock
+    audio.style.display = 'block';
+    document.getElementById('tts-result').innerText = '';
+  } else {
+    document.getElementById('tts-result').innerText = 'Error generating speech.';
+  }
+});
+</script>
+{% endblock %} 

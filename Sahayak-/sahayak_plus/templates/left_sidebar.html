@@ -1,0 +1,110 @@
+<aside class="w-64 bg-dark-800 shadow-lg min-h-screen sticky top-16 transition-transform duration-300 ease-in-out z-50">
+    <!-- Mobile close button -->
+    <div class="flex lg:hidden justify-end p-2">
+        <button id="sidebarClose" class="text-gray-400 hover:text-white focus:outline-none">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+    <nav class="p-4">
+        <ul class="space-y-1">
+            <li>
+                <a href="{{ url_for('home') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 hover:scale-[1.03] active:scale-95 transition-all duration-200 ease-in-out shadow-sm {% if request.endpoint == 'home' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_home">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('tools') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'tools' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_ask_ai">Ask AI</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('ai_agent_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'ai_agent_page' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <path d="M8 15s1.5 2 4 2 4-2 4-2" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="9" cy="10" r="1" fill="currentColor"/>
+                        <circle cx="15" cy="10" r="1" fill="currentColor"/>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_ai_agent">AI Agent</span>
+                </a>
+            </li>
+            <li>
+                <a href="/diksha" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_diksha_library">DIKSHA Library</span>
+                </a>
+            </li>
+            <li>
+                <a href="/free-apis" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_free_apis">Free APIs</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('dashboard') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'dashboard' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_dashboard">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('image_gen_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <path d="M8 8h8M8 12h8M8 16h8"/>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_diagram_generator">Diagram Generator</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('code_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <path d="M8 8h8M8 12h8M8 16h8"/>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_code_sahayak">Code Sahayak</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('feed') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'feed' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_teaching_feed">Teaching Feed</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('analytics') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'analytics' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span class="font-medium" data-translate="sidebar_analytics">Analytics</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+<script>
+// Sidebar close for mobile
+const sidebarClose = document.getElementById('sidebarClose');
+const sidebarContainer = document.getElementById('sidebarContainer');
+if (sidebarClose && sidebarContainer) {
+    sidebarClose.addEventListener('click', () => {
+        sidebarContainer.classList.add('-translate-x-full');
+        sidebarContainer.classList.remove('translate-x-0');
+    });
+}
+</script> 

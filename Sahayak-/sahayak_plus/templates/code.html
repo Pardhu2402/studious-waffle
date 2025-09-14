@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+button {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid rgb(61, 106, 255);
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+button:hover {
+  background: rgb(61, 106, 255);
+  box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+button:hover::before {
+  -webkit-animation: sh02 0.5s 0s linear;
+  -moz-animation: sh02 0.5s 0s linear;
+  animation: sh02 0.5s 0s linear;
+}
+button::before {
+  content: '';
+  display: block;
+  width: 0px;
+  height: 86%;
+  position: absolute;
+  top: 7%;
+  left: 0%;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 50px 30px #fff;
+  -webkit-transform: skewX(-20deg);
+  -moz-transform: skewX(-20deg);
+  -ms-transform: skewX(-20deg);
+  -o-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+}
+@keyframes sh02 {
+  from {
+    opacity: 0;
+    left: 0%;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    left: 100%;
+  }
+}
+button:active {
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: box-shadow 0.2s ease-in;
+  -moz-transition: box-shadow 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
+}
+.glass-radio-group {
+  --bg: rgba(255, 255, 255, 0.06);
+  --text: #e5e5e5;
+  display: flex;
+  position: relative;
+  background: var(--bg);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    inset 1px 1px 4px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 6px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  width: fit-content;
+}
+
+.glass-radio-group input {
+  display: none;
+}
+
+.glass-radio-group label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  font-size: 14px;
+  padding: 0.8rem 1.6rem;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease-in-out;
+}
+
+.glass-radio-group label:hover {
+  color: white;
+}
+
+.glass-radio-group input:checked + label {
+  color: #fff;
+}
+
+.glass-glider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(100% / 2);
+  border-radius: 1rem;
+  z-index: 1;
+  transition:
+    transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56),
+    background 0.4s ease-in-out,
+    box-shadow 0.4s ease-in-out;
+}
+
+#glass-generate:checked ~ .glass-glider {
+  transform: translateX(0%);
+  background: linear-gradient(135deg, #c0c0c055, #e0e0e0);
+  box-shadow:
+    0 0 18px rgba(192, 192, 192, 0.5),
+    0 0 10px rgba(255, 255, 255, 0.4) inset;
+}
+#glass-evaluate:checked ~ .glass-glider {
+  transform: translateX(100%);
+  background: linear-gradient(135deg, #ffd70055, #ffcc00);
+  box-shadow:
+    0 0 18px rgba(255, 215, 0, 0.5),
+    0 0 10px rgba(255, 235, 150, 0.4) inset;
+}
+/* Glassy effect for all main content cards and backgrounds */
+.bg-white.dark\:bg-dark-800.rounded-xl,
+.bg-white.dark\:bg-dark-800.rounded-lg,
+.bg-white.dark\:bg-dark-800.p-8,
+.bg-white.dark\:bg-dark-800.p-6,
+.bg-white.dark\:bg-dark-800,
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+  <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700 max-w-2xl mx-auto">
+    <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6 flex items-center space-x-4">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+        <img src="/static/img/images-3.jpeg" alt="Code Sahayak" class="w-full h-full object-cover rounded-xl" />
+      </div>
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold text-white mb-1">Code Sahayak</h1>
+        <p class="text-gray-300">Generate new code or evaluate existing code with AI assistance.</p>
+      </div>
+    </div>
+    <form id="code-form" class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        <h2 class="text-lg font-semibold text-white flex items-center">
+          <svg class="inline w-6 h-6 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          Code Mode
+        </h2>
+        <div class="glass-radio-group ml-auto" style="margin-right:0;">
+          <input type="radio" name="code_mode" id="glass-generate" value="generate" />
+          <label for="glass-generate">Generate</label>
+          <input type="radio" name="code_mode" id="glass-evaluate" value="evaluate" checked />
+          <label for="glass-evaluate">Evaluate</label>
+          <div class="glass-glider"></div>
+        </div>
+      </div>
+      <div id="code-input-container">
+        <label for="code-input" class="block text-sm font-medium text-gray-300 mb-2">Code to Evaluate</label>
+        <textarea id="code-input" rows="6" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="Paste code to evaluate"></textarea>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="code-language" class="block text-sm font-medium text-gray-300 mb-2">Language</label>
+          <input id="code-language" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="e.g., python">
+        </div>
+        <div id="task-field">
+          <label for="code-task" class="block text-sm font-medium text-gray-300 mb-2">Task</label>
+          <input id="code-task" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="review, feedback, evaluate">
+        </div>
+        <div id="description-field" class="hidden">
+          <label for="code-description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+          <input id="code-description" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="What code do you want to generate?">
+        </div>
+      </div>
+      <button type="submit">Evaluate Code</button>
+    </form>
+    <div id="loading-spinner" class="flex justify-center items-center my-4" style="display:none;">
+      <svg class="animate-spin h-8 w-8 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <span class="ml-3 text-blue-300 text-sm">Generating...</span>
+    </div>
+    <div id="code-result" class="mt-6 text-sm text-gray-200 bg-dark-700 p-4 rounded-lg border-l-4 border-blue-500 leading-relaxed min-h-[2rem]"></div>
+  </div>
+</div>
+<script>
+// Mode switching logic
+document.querySelectorAll('input[name="code_mode"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const taskField = document.getElementById('task-field');
+    const descriptionField = document.getElementById('description-field');
+    const submitButton = document.querySelector('button[type="submit"]');
+    const codeInputContainer = document.getElementById('code-input-container');
+    const codeInput = document.getElementById('code-input');
+    
+    if (this.value === 'generate') {
+      taskField.classList.add('hidden');
+      descriptionField.classList.remove('hidden');
+      submitButton.textContent = 'Generate Code';
+      codeInputContainer.classList.add('hidden');
+      codeInput.placeholder = 'Paste code here';
+      codeInput.rows = 6;
+    } else {
+      taskField.classList.remove('hidden');
+      descriptionField.classList.add('hidden');
+      submitButton.textContent = 'Evaluate Code';
+      codeInputContainer.classList.remove('hidden');
+      codeInput.placeholder = 'Paste code to evaluate';
+      codeInput.rows = 6;
+    }
+  });
+});
+
+document.getElementById('code-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const code = document.getElementById('code-input').value;
+  const language = document.getElementById('code-language').value || 'python';
+  const mode = document.querySelector('input[name="code_mode"]:checked').value;
+  const task = mode === 'evaluate' ? (document.getElementById('code-task').value || 'review') : 'generate';
+  const description = mode === 'generate' ? document.getElementById('code-description').value : '';
+  
+  const body = { code, language, task };
+  if (task === 'generate') body.description = description;
+  
+  // Show loading spinner
+  document.getElementById('loading-spinner').style.display = 'flex';
+  document.getElementById('code-result').innerText = '';
+
+  const response = await fetch('/code/evaluate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await response.json();
+
+  // Hide loading spinner
+  document.getElementById('loading-spinner').style.display = 'none';
+  document.getElementById('code-result').innerText = data.success ? data.result : (data.error || data.message);
+});
+</script>
+{% endblock %} 

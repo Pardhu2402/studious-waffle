@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+#chatbot-container {
+  background: #181c2a;
+  border-radius: 18px;
+  border: 1px solid #2a2e3e;
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  width: 100%;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 32px 0 #0003;
+  max-width: 100%;
+  position: relative;
+}
+#chat-history {
+  background: #23263a;
+  border-radius: 12px;
+  padding: 2rem 1.5rem 2rem 1.5rem;
+  min-height: 320px;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  font-size: 1.12rem;
+  transition: background 0.2s;
+}
+.chat-message {
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.7rem;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+.chat-message.user {
+  flex-direction: row-reverse;
+}
+.chat-message .avatar {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  background: #3d6aff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #fff;
+  box-shadow: 0 2px 8px #0002;
+}
+.chat-message.agent .avatar {
+  background: #2a2e3e;
+  color: #6be6ff;
+}
+.chat-message.user .avatar {
+  background: #3d6aff;
+  color: #fff;
+}
+.chat-message.user .bubble {
+  background: linear-gradient(90deg, #3d6aff 60%, #6be6ff 100%);
+  color: #fff;
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 18px;
+}
+.chat-message.agent .bubble {
+  background: #2a2e3e;
+  color: #fff;
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 18px;
+}
+.bubble {
+  padding: 0.85rem 1.3rem;
+  border-radius: 18px;
+  max-width: 80%;
+  word-break: break-word;
+  font-size: 1.08rem;
+  box-shadow: 0 2px 8px #0001;
+  transition: background 0.2s;
+}
+#chat-input-row {
+  display: flex;
+  gap: 0.7rem;
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background: #181c2a;
+  z-index: 2;
+  padding-top: 0.5rem;
+}
+#chat-input {
+  flex: 1;
+  padding: 0.9rem 1.1rem;
+  border-radius: 10px;
+  border: 1.5px solid #3d6aff;
+  background: #23263a;
+  color: #fff;
+  font-size: 1.08rem;
+  min-width: 0;
+  outline: none;
+  transition: border 0.2s;
+}
+#chat-input:focus {
+  border-color: #6be6ff;
+}
+#send-btn {
+  background: linear-gradient(90deg, #3d6aff 60%, #6be6ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 1.7rem;
+  font-weight: 700;
+  font-size: 1.08rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #0001;
+}
+#send-btn:disabled {
+  background: #6b7cff;
+  cursor: not-allowed;
+}
+#reset-btn {
+  background: #2a2e3e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  margin-left: auto;
+  display: block;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#reset-btn:hover {
+  background: #3d6aff;
+  color: #fff;
+}
+@media (min-width: 900px) {
+  .max-w-3xl {
+    max-width: 900px !important;
+  }
+  #chatbot-container {
+    padding: 2.5rem 3.5rem 2rem 3.5rem;
+    max-width: 900px;
+  }
+  #chat-history {
+    padding: 2.5rem 2rem 2.5rem 2rem;
+    min-height: 350px;
+    max-height: 70vh;
+    font-size: 1.13rem;
+  }
+}
+@media (max-width: 900px) {
+  #chatbot-container {
+    padding: 1rem;
+    max-width: 100vw;
+  }
+  #chat-history {
+    padding: 1rem;
+    font-size: 1.01rem;
+  }
+}
+@media (max-width: 600px) {
+  #chatbot-container {
+    padding: 0.5rem;
+    max-width: 100vw;
+  }
+  #chat-history {
+    padding: 0.5rem;
+    font-size: 0.97rem;
+    min-height: 120px;
+    max-height: 30vh;
+  }
+  #chat-input-row {
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-top: 0.2rem;
+  }
+  #send-btn {
+    width: 100%;
+    padding: 0.9rem 0;
+  }
+  #reset-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+/* Glassy effect for all main content cards and backgrounds */
+.bg-white.dark\:bg-dark-800.rounded-xl,
+.bg-white.dark\:bg-dark-800.rounded-lg,
+.bg-white.dark\:bg-dark-800.p-8,
+.bg-white.dark\:bg-dark-800.p-6,
+.bg-white.dark\:bg-dark-800,
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="max-w-3xl mx-auto py-6 px-4">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <h1 class="text-2xl font-bold text-white mb-6">AI Agent</h1>
+        <div id="chatbot-container">
+            <button id="reset-btn" title="Reset Chat">Reset Chat</button>
+            <div id="chat-history"></div>
+            <div id="chat-input-row">
+                <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="off" />
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+let chatHistory = [];
+let chatSessionId = null;
+function appendMessage(role, text) {
+    const chatHistoryDiv = document.getElementById('chat-history');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-message ' + role;
+    // Avatar
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    // Use SVG icons instead of emoji
+    if (role === 'user') {
+        avatar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-7 h-7" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" stroke-width="2"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7" stroke-width="2"/></svg>`;
+    } else {
+        avatar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-7 h-7" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="11" width="18" height="7" rx="3.5" stroke-width="2"/><circle cx="7.5" cy="14.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="14.5" r="1.5" fill="currentColor"/><rect x="8" y="4" width="8" height="5" rx="2.5" stroke-width="2"/></svg>`;
+    }
+    // Bubble
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    // Helper to extract a valid image URL
+    function extractImageUrl(url) {
+        const match = url.match(/(https?:\/\/[^"]*?\.(jpg|jpeg|png|gif))/i);
+        return match ? match[1] : null;
+    }
+    // Replace Markdown images
+    let html = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, function(_, alt, url) {
+        const imgUrl = extractImageUrl(url);
+        return imgUrl ? `<img src="${imgUrl}" alt="${alt}" style="max-width:200px;display:block;margin:8px 0;">` : url;
+    });
+    // Replace Markdown links
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(_, label, url) {
+        const imgUrl = extractImageUrl(url);
+        if (imgUrl) {
+            return `<img src="${imgUrl}" alt="${label}" style="max-width:200px;display:block;margin:8px 0;">`;
+        }
+        return `<a href="${url}" target="_blank" style="color:#3d6aff;text-decoration:underline;">${label}</a>`;
+    });
+    // Replace plain image URLs
+    html = html.replace(/(https?:\/\/[^"]*?\.(jpg|jpeg|png|gif))/gi, function(match) {
+        const imgUrl = extractImageUrl(match);
+        return imgUrl ? `<img src="${imgUrl}" style="max-width:200px;display:block;margin:8px 0;">` : match;
+    });
+    // Replace plain URLs (that are not images)
+    html = html.replace(/(https?:\/\/[^"]+)/g, function(match) {
+        if (extractImageUrl(match)) return match; // Already handled as image
+        if (/\.(tif|tiff)$/i.test(match)) {
+            return `<a href="${match}" target="_blank" style="color:#3d6aff;text-decoration:underline;">[View TIFF image]</a>`;
+        }
+        return `<a href="${match}" target="_blank" style="color:#3d6aff;text-decoration:underline;">${match}</a>`;
+    });
+    // Newlines
+    html = html.replace(/\n/g, '<br>');
+    bubble.innerHTML = html;
+    msgDiv.appendChild(avatar);
+    msgDiv.appendChild(bubble);
+    chatHistoryDiv.appendChild(msgDiv);
+    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+}
+function resetChat() {
+    chatHistory = [];
+    chatSessionId = self.crypto && self.crypto.randomUUID ? self.crypto.randomUUID() : Math.random().toString(36).substring(2);
+    document.getElementById('chat-history').innerHTML = '';
+}
+document.getElementById('reset-btn').addEventListener('click', function() {
+    resetChat();
+    document.getElementById('chat-input').focus();
+});
+resetChat();
+document.getElementById('send-btn').addEventListener('click', sendChatMessage);
+document.getElementById('chat-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        sendChatMessage();
+    }
+});
+function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    appendMessage('user', text);
+    input.value = '';
+    input.disabled = true;
+    document.getElementById('send-btn').disabled = true;
+    fetch('/ai-agent/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text, session_id: chatSessionId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.response) {
+            appendMessage('agent', data.response);
+        } else if (data.error) {
+            appendMessage('agent', `<span style='color:#f66;'>Error: ${data.error}</span>`);
+        } else {
+            appendMessage('agent', '<span style="color:#f66;">No response from agent.</span>');
+        }
+    })
+    .catch(err => {
+        appendMessage('agent', `<span style='color:#f66;'>Error: ${err.message}</span>`);
+    })
+    .finally(() => {
+        input.disabled = false;
+        document.getElementById('send-btn').disabled = false;
+        input.focus();
+    });
+}
+</script>
+{% endblock %} 

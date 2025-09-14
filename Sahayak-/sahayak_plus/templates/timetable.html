@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+button {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid rgb(61, 106, 255);
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+button:hover {
+  background: rgb(61, 106, 255);
+  box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+button:active {
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: box-shadow 0.2s ease-in;
+  -moz-transition: box-shadow 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
+}
+/* Glassy effect for all main content cards and backgrounds */
+.bg-white.dark\:bg-dark-800.rounded-xl,
+.bg-white.dark\:bg-dark-800.rounded-lg,
+.bg-white.dark\:bg-dark-800.p-8,
+.bg-white.dark\:bg-dark-800.p-6,
+.bg-white.dark\:bg-dark-800,
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+  <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700 max-w-xl mx-auto">
+    <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6 flex items-center space-x-4">
+      <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+        <span class="text-3xl text-blue-500">🗓️</span>
+      </div>
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold text-white mb-1">Timetable & Circulars</h1>
+        <p class="text-gray-300">Check timetable suggestions and generate circulars based on weather and events.</p>
+      </div>
+    </div>
+    <form method="POST" class="space-y-4">
+      <div>
+        <label for="timetable-location" class="block text-sm font-medium text-gray-300 mb-2">Location</label>
+        <input name="location" id="timetable-location" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="Enter location (e.g., Vizag)" value="{{ location if location else '' }}">
+      </div>
+      <button type="submit" class="button">Check Timetable</button>
+    </form>
+    {% if suggestion %}
+    <div class="mt-6 text-sm text-gray-200 bg-dark-700 p-4 rounded-lg border-l-4 border-blue-500 leading-relaxed min-h-[2rem]">
+      {{ suggestion }} (Weather: {{ weather.forecast }}, {{ weather.temp_c }}°C)
+    </div>
+    {% endif %}
+    <form method="POST" class="mt-8 space-y-4">
+      <div>
+        <label for="circular-event" class="block text-sm font-medium text-gray-300 mb-2">Event or Reason for Circular</label>
+        <input name="circular_event" id="circular-event" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="Event or reason for circular" value="{{ circular_event if circular_event else '' }}">
+      </div>
+      <button type="submit" name="generate_circular" class="bg-green-600 text-white button">Generate Circular</button>
+    </form>
+    {% if circular %}
+    <div class="mt-6 text-sm text-gray-200 bg-dark-700 p-4 rounded-lg border-l-4 border-green-500 leading-relaxed min-h-[2rem]">
+      {{ circular }}
+    </div>
+    {% endif %}
+  </div>
+</div>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  var loc = document.getElementById('timetable-location');
+  if (loc) { loc.style.height = 'auto'; loc.style.height = (loc.scrollHeight) + 'px'; }
+  var ce = document.getElementById('circular-event');
+  if (ce) { ce.style.height = 'auto'; ce.style.height = (ce.scrollHeight) + 'px'; }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sahayak+ Wireframes & Mockups</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f7;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 1.5em;
+      max-width: 1100px;
+      margin: 2em auto;
+      padding: 2em;
+      background: #fff;
+      border: 2.5px dashed #bbb;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .screen-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 0;
+    }
+    .screen-label {
+      font-weight: bold;
+      font-size: 1.08em;
+      margin-bottom: 0.5em;
+      text-align: center;
+      color: #444;
+      letter-spacing: 0.5px;
+    }
+    .screen {
+      background: #fdfdfb;
+      border: 2px dashed #bbb;
+      border-radius: 18px;
+      width: 300px;
+      min-height: 370px;
+      box-sizing: border-box;
+      padding: 1em 0.7em 0.7em 0.7em;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 0;
+      box-shadow: none;
+    }
+    .device-bar {
+      width: 54px;
+      height: 7px;
+      background: #e0e0e0;
+      border-radius: 6px;
+      margin: 0 auto 1em auto;
+      display: block;
+    }
+    .screen-title {
+      font-weight: bold;
+      font-size: 1em;
+      margin-bottom: 0.6em;
+      letter-spacing: 0.5px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .block {
+      border: 1.5px dashed #aaa;
+      border-radius: 8px;
+      background: #f6f6f2;
+      margin: 0.5em 0;
+      padding: 0.7em 1em;
+      width: 90%;
+      text-align: center;
+      font-size: 1em;
+      font-family: Arial, sans-serif;
+    }
+    .icon {
+      font-size: 1.7em;
+      margin-bottom: 0.1em;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      margin: 0.4em 0;
+    }
+    .avatar {
+      font-size: 1.7em;
+      margin-right: 0.5em;
+    }
+    .agent-block {
+      border: 1.5px dashed #6c63ff;
+      background: #f3f2fd;
+      border-radius: 8px;
+      padding: 0.5em 0.7em;
+      margin: 0.3em 0.2em;
+      font-size: 0.97em;
+      display: inline-block;
+      font-family: Arial, sans-serif;
+    }
+    .arrow {
+      font-size: 1.2em;
+      color: #6c63ff;
+      margin: 0 0.2em;
+      vertical-align: middle;
+      font-family: Arial, sans-serif;
+    }
+    @media (max-width: 1100px) {
+      .main-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 750px;
+        padding: 1em;
+      }
+      .screen {
+        width: 95vw;
+        min-width: 0;
+        max-width: 99vw;
+      }
+    }
+    @media (max-width: 700px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        max-width: 99vw;
+        padding: 0.5em;
+      }
+      .screen {
+        width: 99vw;
+        min-width: 0;
+        max-width: 99vw;
+      }
+    }
+    @media print {
+      body { background: #fff; }
+      .main-grid { box-shadow: none; border: 1.5px dashed #bbb; }
+      .screen { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-grid">
+    <div class="screen-block">
+      <div class="screen-label">Dashboard / Main Menu</div>
+      <div class="screen">
+        <div class="device-bar"></div>
+        <div class="screen-title">Sahayak+ Dashboard</div>
+        <div class="block"><span class="icon">🎤</span> Voice/Text Input</div>
+        <div class="block"><span class="icon">📚</span> Content Generator</div>
+        <div class="block"><span class="icon">📝</span> Worksheet Maker</div>
+        <div class="block"><span class="icon">📊</span> Analytics</div>
+        <div class="block"><span class="icon">👥</span> Social Feed</div>
+        <div class="block"><span class="icon">👪</span> Parent/Guardian Updates</div>
+        <div class="block"><span class="icon">⚙️</span> Settings</div>
+      </div>
+    </div>
+    <div class="screen-block">
+      <div class="screen-label">Worksheet Generator</div>
+      <div class="screen">
+        <div class="device-bar"></div>
+        <div class="screen-title">Worksheet Generator</div>
+        <div class="block"><span class="icon">🖼️</span> Upload Textbook Photo</div>
+        <div class="block"><span class="icon">🔍</span> Select Grade & Subject</div>
+        <div class="block"><span class="icon">🤖</span> AI Suggests Questions</div>
+        <div class="block"><span class="icon">📄</span> Preview Worksheet</div>
+        <div class="block"><span class="icon">⬇️</span> Download as PDF</div>
+      </div>
+    </div>
+    <div class="screen-block">
+      <div class="screen-label">Content Generator</div>
+      <div class="screen">
+        <div class="device-bar"></div>
+        <div class="screen-title">Content Generator</div>
+        <div class="block"><span class="icon">🎤</span> Ask a Question</div>
+        <div class="block"><span class="icon">🌐</span> Choose Language</div>
+        <div class="block"><span class="icon">📑</span> AI-Generated Answer</div>
+        <div class="block"><span class="icon">🖍️</span> Visual Aid (Blackboard Sketch)</div>
+        <div class="block"><span class="icon">🎮</span> Game/Activity Suggestion</div>
+      </div>
+    </div>
+    <div class="screen-block">
+      <div class="screen-label">Social Feed / Community</div>
+      <div class="screen">
+        <div class="device-bar"></div>
+        <div class="screen-title">India Teaching Room</div>
+        <div class="row">
+          <span class="avatar">👩‍🏫</span>
+          <div class="block" style="width:70%">"Explain water cycle in Telugu"</div>
+        </div>
+        <div class="row">
+          <span class="avatar">👨‍🏫</span>
+          <div class="block" style="width:70%">"Math games for multi-grade"</div>
+        </div>
+        <div class="block"><span class="icon">👍</span> Like &nbsp; <span class="icon">💬</span> Comment</div>
+        <div class="block"><span class="icon">➕</span> Post Your Prompt</div>
+      </div>
+    </div>
+    <div class="screen-block">
+      <div class="screen-label">Profile / Analytics</div>
+      <div class="screen">
+        <div class="device-bar"></div>
+        <div class="screen-title">Teacher Profile</div>
+        <div class="block"><span class="icon">👩‍🏫</span> Mrs. Kavitha</div>
+        <div class="block"><span class="icon">🏫</span> Govt School, Vizag</div>
+        <div class="block"><span class="icon">📈</span> Worksheets Created: 133</div>
+        <div class="block"><span class="icon">🏅</span> Badges: Worksheet Wizard, Language Pro</div>
+        <div class="block"><span class="icon">📊</span> Analytics: Usage, Engagement</div>
+      </div>
+    </div>
+    <div class="screen-block">
+      <div class="screen-label">Parent/Guardian Notification</div>
+      <div class="screen">
+        <div class="device-bar"></div>
+        <div class="screen-title">Parent/Guardian Notification</div>
+        <div class="block"><span class="icon">👩‍🏫</span> Teacher sends update</div>
+        <span class="arrow">⬇️</span>
+        <div class="block"><span class="icon">📲</span> Google Classroom API</div>
+        <span class="arrow">⬇️</span>
+        <div class="block"><span class="icon">👪</span> Parent/Guardian receives SMS/Email</div>
+      </div>
+    </div>
+    <div class="screen-block">
+      <div class="screen-label">Agentic Mesh (Block Diagram)</div>
+      <div class="screen" style="min-height:320px;">
+        <div class="device-bar"></div>
+        <div class="screen-title">Agentic Mesh Overview</div>
+        <div>
+          <span class="agent-block">Content Agent</span>
+          <span class="arrow">⟷</span>
+          <span class="agent-block">Feedback Agent</span>
+        </div>
+        <div>
+          <span class="agent-block">Timetable Agent</span>
+          <span class="arrow">⟷</span>
+          <span class="agent-block">Social Agent</span>
+        </div>
+        <div>
+          <span class="agent-block">Wellbeing Agent</span>
+          <span class="arrow">⟷</span>
+          <span class="agent-block">Integration Agent</span>
+        </div>
+        <div>
+          <span class="agent-block">Peer Facilitator</span>
+          <span class="arrow">⟷</span>
+          <span class="agent-block">NEP Compliance</span>
+        </div>
+        <div>
+          <span class="agent-block">Parental Engagement</span>
+          <span class="arrow">⟷</span>
+          <span class="agent-block">Assessment</span>
+        </div>
+        <div style="margin-top:1em;">
+          <span class="block" style="background:#e0f7fa;">All agents share data and support each other in real time</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

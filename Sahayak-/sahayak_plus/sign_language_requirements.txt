@@ -1,0 +1,24 @@
+# Sign Language Feature Dependencies
+# Add these to your main requirements.txt or install separately
+
+vosk>=0.3.45
+pyaudio>=0.2.11
+SpeechRecognition>=3.10.0
+textblob>=0.17.1
+
+# Installation instructions:
+# For vosk models, download from: https://alphacephei.com/vosk/models
+# Required models:
+# - vosk-model-small-en-us-0.15 (for ASL/English)
+# - vosk-model-en-in-0.5 (for ISL)
+# - vosk-model-small-hi-0.22 (for Hindi)
+# - vosk-model-small-te-0.42 (for Telugu)
+# - vosk-model-small-gu-0.42 (for Gujarati)
+
+# For PyAudio on Mac:
+# brew install portaudio
+# pip install pyaudio
+
+# For PyAudio on Ubuntu/Debian:
+# sudo apt-get install portaudio19-dev python3-pyaudio
+# pip install pyaudio

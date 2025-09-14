@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h1 class="text-xl font-semibold text-white">Student Feedback Collection</h1>
+                        <p class="text-gray-300">Collect real-time feedback from students using emoji, voice, and webcam</p>
+                    </div>
+                </div>
+                <a href="/monitoringclass" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Classroom Monitoring</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Feedback Collection -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <h2 class="text-lg font-semibold text-white mb-4">How are you feeling about today's lesson?</h2>
+            
+            <!-- Emoji Feedback -->
+            <div class="mb-6">
+                <h3 class="text-md font-medium text-gray-300 mb-3">Quick Emoji Response</h3>
+                <div class="flex space-x-4">
+                    <button class="emoji-btn text-3xl hover:scale-110 transition-transform" data-emoji="😊" data-value="happy">😊</button>
+                    <button class="emoji-btn text-3xl hover:scale-110 transition-transform" data-emoji="😐" data-value="neutral">😐</button>
+                    <button class="emoji-btn text-3xl hover:scale-110 transition-transform" data-emoji="😞" data-value="sad">😞</button>
+                    <button class="emoji-btn text-3xl hover:scale-110 transition-transform" data-emoji="🤔" data-value="confused">🤔</button>
+                    <button class="emoji-btn text-3xl hover:scale-110 transition-transform" data-emoji="🎉" data-value="excited">🎉</button>
+                </div>
+            </div>
+
+            <!-- Voice Feedback -->
+            <div class="mb-6">
+                <h3 class="text-md font-medium text-gray-300 mb-3">Voice Feedback</h3>
+                <div class="flex space-x-4">
+                    <button id="startRecording" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        🎤 Start Recording
+                    </button>
+                    <button id="stopRecording" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors hidden">
+                        ⏹ Stop Recording
+                    </button>
+                </div>
+                <div id="recordingStatus" class="text-sm text-gray-400 mt-2"></div>
+                
+                <!-- Transcription Results -->
+                <div id="transcriptionResults" class="hidden mt-4">
+                    <h4 class="text-md font-medium text-gray-300 mb-2">Transcription:</h4>
+                    <div id="transcriptionText" class="bg-dark-700 p-3 rounded-lg border border-dark-600 text-gray-200 text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Webcam Feedback -->
+            <div class="mb-6">
+                <h3 class="text-md font-medium text-gray-300 mb-3">Webcam Expression Analysis</h3>
+                <div class="flex space-x-4">
+                    <button id="startWebcam" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        📷 Start Camera
+                    </button>
+                    <button id="stopWebcam" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors hidden">
+                        ⏹ Stop Camera
+                    </button>
+                </div>
+                <video id="webcamVideo" class="mt-3 w-full max-w-md rounded-lg hidden" autoplay muted></video>
+            </div>
+        </div>
+
+        <!-- Feedback Analytics -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+            <h2 class="text-lg font-semibold text-white mb-4">Feedback Analytics</h2>
+            <div id="feedbackAnalytics" class="text-gray-300">
+                <p>Feedback data will appear here after collection.</p>
+            </div>
+        </div>
+
+        <!-- AI Teacher Suggestions -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-white">🤖 AI Teacher Suggestions</h2>
+                <button id="generateSuggestions" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <span>Generate Suggestions</span>
+                </button>
+            </div>
+            <p class="text-gray-400 text-sm mb-4">Get AI-powered recommendations for your next class based on student feedback</p>
+            
+            <div id="suggestionsContent" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- What to Improve -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <h3 class="text-blue-400 font-medium mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            Areas to Improve
+                        </h3>
+                        <div id="improvementsList" class="text-gray-300 space-y-2">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
+                                <div class="h-4 bg-gray-600 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What to Continue -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <h3 class="text-green-400 font-medium mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Keep Doing Well
+                        </h3>
+                        <div id="strengthsList" class="text-gray-300 space-y-2">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
+                                <div class="h-4 bg-gray-600 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Class Recommendations -->
+                <div class="mt-6 bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-lg p-4 border border-purple-500/30">
+                    <h3 class="text-purple-400 font-medium mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Next Class Recommendations
+                    </h3>
+                    <div id="nextClassRecommendations" class="text-gray-300 space-y-3">
+                        <div class="animate-pulse">
+                            <div class="h-4 bg-gray-600 rounded w-full mb-2"></div>
+                            <div class="h-4 bg-gray-600 rounded w-5/6 mb-2"></div>
+                            <div class="h-4 bg-gray-600 rounded w-4/5"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Items -->
+                <div class="mt-6 bg-gradient-to-r from-orange-900/20 to-red-900/20 rounded-lg p-4 border border-orange-500/30">
+                    <h3 class="text-orange-400 font-medium mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Action Items
+                    </h3>
+                    <div id="actionItems" class="text-gray-300 space-y-2">
+                        <div class="animate-pulse">
+                            <div class="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
+                            <div class="h-4 bg-gray-600 rounded w-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="suggestionsLoading" class="hidden text-center py-8">
+                <div class="inline-flex items-center space-x-2">
+                    <svg class="animate-spin h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-purple-400">Analyzing feedback and generating suggestions...</span>
+                </div>
+            </div>
+
+            <div id="noFeedbackMessage" class="text-center py-8 text-gray-400">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <p class="text-lg font-medium mb-2">No feedback collected yet</p>
+                <p class="text-sm">Collect some student feedback first to get AI-powered suggestions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Emoji feedback
+document.querySelectorAll('.emoji-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const emoji = this.getAttribute('data-emoji');
+        const value = this.getAttribute('data-value');
+        
+        try {
+            const response = await fetch('/feedback/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'emoji',
+                    value: value,
+                    student_id: 'demo_student',
+                    lesson_id: 'demo_lesson'
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                this.style.transform = 'scale(1.2)';
+                setTimeout(() => this.style.transform = '', 200);
+                alert('Thank you for your feedback!');
+                
+                // Add to local collection for AI analysis
+                addFeedbackToCollection('emoji', value);
+                
+                // Auto-generate suggestions after feedback
+                setTimeout(() => {
+                    document.getElementById('generateSuggestions').click();
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        }
+    });
+});
+
+// Voice recording - using the same pattern as tools.html
+let mediaRecorder;
+let audioChunks = [];
+let recording = false;
+let stream = null;
+
+document.getElementById('startRecording').addEventListener('click', async function() {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+        document.getElementById('recordingStatus').textContent = 'Voice recording not supported in this browser.';
+        return;
+    }
+    if (!recording) {
+        // Start recording
+        document.getElementById('recordingStatus').textContent = 'Recording... Click again to stop.';
+        this.disabled = false;
+        audioChunks = [];
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = async () => {
+                document.getElementById('recordingStatus').textContent = 'Transcribing...';
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'feedback_audio.webm');
+                try {
+                    const res = await fetch('/speech-to-text', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.text) {
+                        // Display transcription
+                        document.getElementById('transcriptionText').textContent = data.text;
+                        document.getElementById('transcriptionResults').classList.remove('hidden');
+                        document.getElementById('recordingStatus').textContent = 'Transcription complete!';
+                        
+                        // Submit voice feedback
+                        const feedbackResponse = await fetch('/feedback/submit', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'voice',
+                                value: data.text,
+                                student_id: 'demo_student',
+                                lesson_id: 'demo_lesson'
+                            })
+                        });
+                        
+                        const feedbackData = await feedbackResponse.json();
+                        if (feedbackData.success) {
+                            document.getElementById('recordingStatus').textContent = 'Voice feedback submitted: ' + data.text;
+                            alert('Voice feedback submitted successfully!');
+                            
+                            // Add to local collection for AI analysis
+                            addFeedbackToCollection('voice', data.text);
+                            
+                            // Auto-generate suggestions if feedback is collected
+                            if (feedbackData.length > 0) {
+                                setTimeout(() => {
+                                    document.getElementById('generateSuggestions').click();
+                                }, 1000);
+                            }
+                        } else {
+                            document.getElementById('recordingStatus').textContent = 'Error submitting feedback';
+                            console.error('Feedback submission failed:', feedbackData);
+                        }
+                    } else {
+                        document.getElementById('recordingStatus').textContent = 'Could not transcribe audio.';
+                        console.error('Speech-to-text error:', data.error || data);
+                    }
+                } catch (err) {
+                    document.getElementById('recordingStatus').textContent = 'Error: ' + err.message;
+                    console.error('Speech-to-text fetch error:', err);
+                }
+                setTimeout(() => { document.getElementById('recordingStatus').textContent = ''; }, 2000);
+                this.disabled = false;
+                recording = false;
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+            };
+            mediaRecorder.start();
+            recording = true;
+            this.textContent = '⏹️'; // Show stop icon
+        } catch (err) {
+            document.getElementById('recordingStatus').textContent = 'Microphone access denied.';
+            this.disabled = false;
+            recording = false;
+            console.error('Microphone access denied:', err);
+        }
+    } else {
+        // Stop recording
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            document.getElementById('recordingStatus').textContent = 'Processing...';
+            this.textContent = '';
+            // Restore icon after processing
+            setTimeout(() => {
+                this.innerHTML = '🎤 Start Recording';
+            }, 2000);
+        }
+        recording = false;
+    }
+});
+
+// Remove the old stopRecording event listener since we're using the same button for start/stop
+document.getElementById('stopRecording').addEventListener('click', function() {
+    // This is now handled by the startRecording button
+});
+
+// Webcam feedback
+let webcamStream;
+
+document.getElementById('startWebcam').addEventListener('click', async function() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.getElementById('webcamVideo');
+        video.srcObject = stream;
+        webcamStream = stream;
+        
+        this.classList.add('hidden');
+        document.getElementById('stopWebcam').classList.remove('hidden');
+        video.classList.remove('hidden');
+        
+        // Simulate expression analysis
+        setTimeout(() => {
+            alert('Expression analysis: Student appears engaged and positive');
+            
+            // Add webcam feedback to collection
+            addFeedbackToCollection('webcam', 'engaged_positive');
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Error accessing webcam:', error);
+        alert('Unable to access webcam');
+    }
+});
+
+document.getElementById('stopWebcam').addEventListener('click', function() {
+    if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        document.getElementById('webcamVideo').classList.add('hidden');
+        
+        this.classList.add('hidden');
+        document.getElementById('startWebcam').classList.remove('hidden');
+    }
+});
+
+// AI Teacher Suggestions functionality
+let feedbackData = [];
+
+// Track feedback submissions
+function addFeedbackToCollection(type, value) {
+    feedbackData.push({
+        type: type,
+        value: value,
+        timestamp: new Date().toISOString()
+    });
+    console.log('Feedback collected:', feedbackData);
+    
+    // Update UI to show feedback is available
+    const noFeedbackMessage = document.getElementById('noFeedbackMessage');
+    const suggestionsContent = document.getElementById('suggestionsContent');
+    
+    if (feedbackData.length > 0) {
+        noFeedbackMessage.classList.add('hidden');
+        suggestionsContent.classList.remove('hidden');
+    }
+}
+
+// Update emoji feedback to track data
+document.querySelectorAll('.emoji-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const emoji = this.getAttribute('data-emoji');
+        const value = this.getAttribute('data-value');
+        
+        try {
+            const response = await fetch('/feedback/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'emoji',
+                    value: value,
+                    student_id: 'demo_student',
+                    lesson_id: 'demo_lesson'
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                this.style.transform = 'scale(1.2)';
+                setTimeout(() => this.style.transform = '', 200);
+                alert('Thank you for your feedback!');
+                
+                // Add to local collection for AI analysis
+                addFeedbackToCollection('emoji', value);
+                
+                // Auto-generate suggestions after feedback
+                setTimeout(() => {
+                    document.getElementById('generateSuggestions').click();
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        }
+    });
+});
+
+// Generate AI suggestions
+document.getElementById('generateSuggestions').addEventListener('click', async function() {
+    if (feedbackData.length === 0) {
+        alert('Please collect some feedback first before generating suggestions.');
+        return;
+    }
+
+    const suggestionsContent = document.getElementById('suggestionsContent');
+    const suggestionsLoading = document.getElementById('suggestionsLoading');
+    const noFeedbackMessage = document.getElementById('noFeedbackMessage');
+
+    // Show loading state
+    suggestionsContent.classList.add('hidden');
+    suggestionsLoading.classList.remove('hidden');
+    noFeedbackMessage.classList.add('hidden');
+
+    try {
+        const response = await fetch('/feedback/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                feedback_data: feedbackData,
+                lesson_context: 'Current lesson feedback analysis'
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Display suggestions
+            displaySuggestions(data.suggestions);
+            suggestionsContent.classList.remove('hidden');
+        } else {
+            alert('Error generating suggestions: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error generating suggestions:', error);
+        alert('Error generating suggestions: ' + error.message);
+    } finally {
+        suggestionsLoading.classList.add('hidden');
+    }
+});
+
+function displaySuggestions(suggestions) {
+    // Display areas to improve
+    const improvementsList = document.getElementById('improvementsList');
+    improvementsList.innerHTML = suggestions.improvements ? suggestions.improvements.map(item => 
+        `<div class="flex items-start space-x-2">
+            <span class="text-red-400 mt-1">•</span>
+            <span>${item}</span>
+        </div>`
+    ).join('') : '<p class="text-gray-400">No specific improvements identified</p>';
+
+    // Display strengths
+    const strengthsList = document.getElementById('strengthsList');
+    strengthsList.innerHTML = suggestions.strengths ? suggestions.strengths.map(item => 
+        `<div class="flex items-start space-x-2">
+            <span class="text-green-400 mt-1">•</span>
+            <span>${item}</span>
+        </div>`
+    ).join('') : '<p class="text-gray-400">No specific strengths identified</p>';
+
+    // Display next class recommendations
+    const nextClassRecommendations = document.getElementById('nextClassRecommendations');
+    nextClassRecommendations.innerHTML = suggestions.next_class_recommendations ? suggestions.next_class_recommendations.map(item => 
+        `<div class="flex items-start space-x-2">
+            <span class="text-purple-400 mt-1">•</span>
+            <span>${item}</span>
+        </div>`
+    ).join('') : '<p class="text-gray-400">No specific recommendations available</p>';
+
+    // Display action items
+    const actionItems = document.getElementById('actionItems');
+    actionItems.innerHTML = suggestions.action_items ? suggestions.action_items.map(item => 
+        `<div class="flex items-start space-x-2">
+            <span class="text-orange-400 mt-1">•</span>
+            <span>${item}</span>
+        </div>`
+    ).join('') : '<p class="text-gray-400">No specific action items identified</p>';
+}
+
+// Check if there's feedback data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const suggestionsContent = document.getElementById('suggestionsContent');
+    const noFeedbackMessage = document.getElementById('noFeedbackMessage');
+    
+    if (feedbackData.length > 0) {
+        suggestionsContent.classList.remove('hidden');
+        noFeedbackMessage.classList.add('hidden');
+    } else {
+        suggestionsContent.classList.add('hidden');
+        noFeedbackMessage.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %} 

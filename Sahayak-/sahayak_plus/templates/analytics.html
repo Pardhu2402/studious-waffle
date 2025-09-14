@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-xl">
+                    <!-- Chart Icon -->
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0V5a2 2 0 012-2h2a2 2 0 012 2v12"/></svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-semibold text-white">Teaching Analytics & Insights</h1>
+                    <p class="text-gray-300">Track your AI usage, content processing, and teaching effectiveness</p>
+                </div>
+                <button onclick="refreshAnalytics()" class="button">
+                    <svg class="w-6 h-6 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.581M5.5 19A9 9 0 1119 5.5"/></svg> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m4 0h-1v-4h-1m4 0h-1v-4h-1"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">AI Requests</p>
+                        <p class="text-2xl font-bold text-gray-900" id="aiRequests">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 8h6"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Worksheets Generated</p>
+                        <p class="text-2xl font-bold text-gray-900" id="worksheetsGenerated">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8v8H8z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">DIKSHA Books</p>
+                        <p class="text-2xl font-bold text-gray-900" id="dikshaBooks">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-7 h-7 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Content Items</p>
+                        <p class="text-2xl font-bold text-gray-900" id="contentItems">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Analytics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- AI Usage Chart -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">AI Usage Trends</h3>
+                <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                    <div class="text-center">
+                        <svg class="w-12 h-12 text-blue-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0V5a2 2 0 012-2h2a2 2 0 012 2v12"/></svg>
+                        <p class="text-gray-600 mt-2">AI Usage Chart</p>
+                        <p class="text-sm text-gray-500">Coming soon with Chart.js integration</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Processing -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Content Processing</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Summaries Generated</span>
+                        <span class="text-sm font-semibold text-blue-600" id="summariesCount">0</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: 0%" id="summariesBar"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Quizzes Created</span>
+                        <span class="text-sm font-semibold text-green-600" id="quizzesCount">0</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-600 h-2 rounded-full" style="width: 0%" id="quizzesBar"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Worksheets Made</span>
+                        <span class="text-sm font-semibold text-purple-600" id="worksheetsCount">0</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-purple-600 h-2 rounded-full" style="width: 0%" id="worksheetsBar"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">MCQs Generated</span>
+                        <span class="text-sm font-semibold text-orange-600" id="mcqsCount">0</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-orange-600 h-2 rounded-full" style="width: 0%" id="mcqsBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Recent Activity</h3>
+            <div id="recentActivity" class="space-y-3">
+                <!-- Activity items will be populated here -->
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Teaching Recommendations -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">💡 AI Teaching Insights</h3>
+                <div id="teachingInsights" class="space-y-4">
+                    <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <h4 class="font-medium text-blue-900">Content Engagement</h4>
+                        <p class="text-sm text-blue-700 mt-1">Based on your usage patterns, Science content is most popular. Consider creating more Science worksheets.</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                        <h4 class="font-medium text-green-900">Grade Level Focus</h4>
+                        <p class="text-sm text-green-700 mt-1">You frequently work with Class 5-8 students. DIKSHA has excellent content for these grades.</p>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+                        <h4 class="font-medium text-purple-900">Content Variety</h4>
+                        <p class="text-sm text-purple-700 mt-1">Try using more multimedia content from DIKSHA to engage visual learners.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Performance Metrics</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Average Response Time</span>
+                        <span class="text-sm font-semibold text-gray-900" id="avgResponseTime">1.2s</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Success Rate</span>
+                        <span class="text-sm font-semibold text-green-600" id="successRate">98.5%</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Most Used Subject</span>
+                        <span class="text-sm font-semibold text-gray-900" id="mostUsedSubject">Science</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Favorite Grade</span>
+                        <span class="text-sm font-semibold text-gray-900" id="favoriteGrade">Class 6</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Active Days</span>
+                        <span class="text-sm font-semibold text-gray-900" id="activeDays">42</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load analytics data
+async function loadAnalytics() {
+    try {
+        const response = await fetch('/analytics/data');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateMetrics(data.metrics);
+            updateActivity(data.recent_activity);
+        }
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+    }
+}
+
+function updateMetrics(metrics) {
+    document.getElementById('aiRequests').textContent = metrics.ai_requests || 0;
+    document.getElementById('worksheetsGenerated').textContent = metrics.worksheets_generated || 0;
+    document.getElementById('dikshaBooks').textContent = metrics.diksha_books || 0;
+    document.getElementById('contentItems').textContent = metrics.content_items || 0;
+    
+    // Update progress bars
+    const summariesCount = metrics.summaries_generated || 0;
+    const quizzesCount = metrics.quizzes_created || 0;
+    const worksheetsCount = metrics.worksheets_made || 0;
+    const mcqsCount = metrics.mcqs_generated || 0;
+    
+    const maxCount = Math.max(summariesCount, quizzesCount, worksheetsCount, mcqsCount, 1);
+    
+    document.getElementById('summariesCount').textContent = summariesCount;
+    document.getElementById('summariesBar').style.width = `${(summariesCount / maxCount) * 100}%`;
+    
+    document.getElementById('quizzesCount').textContent = quizzesCount;
+    document.getElementById('quizzesBar').style.width = `${(quizzesCount / maxCount) * 100}%`;
+    
+    document.getElementById('worksheetsCount').textContent = worksheetsCount;
+    document.getElementById('worksheetsBar').style.width = `${(worksheetsCount / maxCount) * 100}%`;
+    
+    document.getElementById('mcqsCount').textContent = mcqsCount;
+    document.getElementById('mcqsBar').style.width = `${(mcqsCount / maxCount) * 100}%`;
+}
+
+function updateActivity(activities) {
+    const container = document.getElementById('recentActivity');
+    
+    if (!activities || activities.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                <span class="text-2xl">📊</span>
+                <p class="mt-2">No recent activity</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = activities.map(activity => `
+        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 bg-linkedin rounded-full flex items-center justify-center text-white text-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0V5a2 2 0 012-2h2a2 2 0 012 2v12"/></svg>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-medium text-gray-900">${activity.title}</p>
+                <p class="text-xs text-gray-500">${activity.timestamp}</p>
+            </div>
+            <span class="text-xs text-gray-400">${activity.duration}</span>
+        </div>
+    `).join('');
+}
+
+function refreshAnalytics() {
+    loadAnalytics();
+}
+
+// Load analytics on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadAnalytics();
+});
+</script>
+{% endblock %} 

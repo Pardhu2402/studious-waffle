@@ -1,0 +1,22 @@
+# Handle line endings automatically for files detected as text
+* text=auto
+
+# Media files
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.model filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+
+# Python files
+*.py text diff=python
+*.pyw text diff=python
+
+# Text files
+*.txt text
+*.html text
+*.md text
+*.conf text
+*.stats text
+*.int text
+README text 

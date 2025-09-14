@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahayak+ - AI Teaching Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0a66c2',
+                        secondary: '#057642',
+                        accent: '#10b981',
+                        dark: '#1f2937',
+                        linkedin: '#0a66c2',
+                        linkedinHover: '#004182',
+                        gradient: {
+                            start: '#667eea',
+                            end: '#764ba2'
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    }
+                    /* Removed fontFamily override to allow language-specific fonts to work */
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/eye_tracking.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <style>
+/* --- MINIMAL, ROBUST LANGUAGE FONT SWITCHING --- */
+html.hindi-font body, html.hindi-font body * {
+  font-family: 'Noto Sans Devanagari', 'Nunito', system-ui, sans-serif !important;
+}
+html.telugu-font body, html.telugu-font body * {
+  font-family: 'Noto Sans Telugu', 'Nunito', system-ui, sans-serif !important;
+}
+html.kannada-font body, html.kannada-font body * {
+  font-family: 'Noto Sans Kannada', 'Nunito', system-ui, sans-serif !important;
+}
+html.english-font body, html.english-font body * {
+  font-family: 'Nunito', system-ui, sans-serif !important;
+}
+/* --- END LANGUAGE FONT SWITCHING --- */
+
+/* Language selector dropdown styles (unchanged) */
+.language-selector {
+  position: relative;
+  display: inline-block;
+  z-index: 1000;
+}
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  min-width: 160px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+.language-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.language-option {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.language-option:hover {
+  background-color: #334155;
+}
+.language-option.active {
+  background-color: #0a66c2;
+  color: white;
+}
+.language-flag {
+  width: 20px;
+  height: 15px;
+  margin-right: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+  --color: rgba(114, 114, 114, 0.08);
+  background-color: rgba(15, 23, 42, 0.85); /* semi-transparent to let aurora show */
+  background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
+      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+  background-size: 55px 55px;
+  min-width: 100vw;
+  min-height: 100vh;
+  right: 0;
+  bottom: 0;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+  background: none !important;
+  /* Remove any default white background */
+  /* Removed strict font constraint to allow language switching */
+}
+
+/* Fix nav bar logo/text cropping and alignment */
+nav.bg-dark-800 .flex.items-center.lg\:hidden {
+  min-height: 4rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+nav.bg-dark-800 .flex.items-center.justify-between.h-16 {
+  min-height: 4rem;
+}
+
+/* Accessibility: Font Size and Spacing Controls */
+.font-size-small {
+  font-size: 0.8em !important;
+  line-height: 1.3 !important;
+}
+
+.font-size-normal {
+  font-size: 1em !important;
+  line-height: 1.5 !important;
+}
+
+.font-size-large {
+  font-size: 1.2em !important;
+  line-height: 1.6 !important;
+}
+
+.font-size-xl {
+  font-size: 1.4em !important;
+  line-height: 1.7 !important;
+}
+
+.font-size-xxl {
+  font-size: 1.6em !important;
+  line-height: 1.8 !important;
+}
+
+/* Keep navigation and accessibility controls at manageable sizes */
+nav, .accessibility-dropdown, .accessibility-btn, #accessibilityToggle {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+/* Ensure accessibility dropdown remains accessible */
+.accessibility-dropdown {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  position: fixed !important;
+  top: 60px !important;
+  right: 10px !important;
+  z-index: 9999 !important;
+}
+
+/* Keep accessibility buttons at consistent size */
+.accessibility-btn {
+  font-size: 12px !important;
+  padding: 6px 12px !important;
+  min-height: auto !important;
+  white-space: nowrap !important;
+}
+
+.spacing-compact {
+  letter-spacing: -0.01em !important;
+  word-spacing: -0.1em !important;
+}
+
+.spacing-normal {
+  letter-spacing: 0em !important;
+  word-spacing: 0em !important;
+}
+
+.spacing-relaxed {
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+}
+
+.spacing-loose {
+  letter-spacing: 0.1em !important;
+  word-spacing: 0.2em !important;
+}
+
+/* Apply accessibility settings to main content areas */
+.accessibility-font-size,
+.accessibility-font-size * {
+  transition: font-size 0.2s ease, line-height 0.2s ease, letter-spacing 0.2s ease, word-spacing 0.2s ease;
+}
+
+/* Accessibility dropdown styles */
+.accessibility-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 280px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.accessibility-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.accessibility-control {
+  margin-bottom: 16px;
+}
+
+.accessibility-control:last-child {
+  margin-bottom: 0;
+}
+
+.accessibility-label {
+  display: block;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.accessibility-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.accessibility-btn {
+  padding: 6px 12px;
+  background: #334155;
+  color: #cbd5e1;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.accessibility-btn:hover {
+  background: #475569;
+  border-color: #64748b;
+}
+
+.accessibility-btn.active {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: white;
+}
+
+/* Color Vision Deficiency Support */
+.cvd-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 250px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.cvd-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.cvd-option {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 4px 0;
+  background: #334155;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cvd-option:hover {
+  background: #475569;
+  border-color: #64748b;
+}
+
+.cvd-option.active {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: white;
+}
+
+.cvd-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  margin-right: 10px;
+  border: 1px solid #475569;
+}
+
+/* Protanopia (Red-blind) Theme */
+.theme-protanopia {
+  --primary-color: #0ea5e9;
+  --secondary-color: #06b6d4;
+  --accent-color: #06b6d4;
+  --success-color: #06b6d4;
+  --warning-color: #f59e0b;
+  --error-color: #f59e0b;
+  --info-color: #06b6d4;
+}
+
+.theme-protanopia .bg-red-600,
+.theme-protanopia .bg-red-500,
+.theme-protanopia .text-red-400,
+.theme-protanopia .text-red-300,
+.theme-protanopia .border-red-500 {
+  background-color: #f59e0b !important;
+  color: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+.theme-protanopia .bg-green-600,
+.theme-protanopia .bg-green-500,
+.theme-protanopia .text-green-400,
+.theme-protanopia .text-green-300,
+.theme-protanopia .border-green-500 {
+  background-color: #06b6d4 !important;
+  color: #06b6d4 !important;
+  border-color: #06b6d4 !important;
+}
+
+/* Deuteranopia (Green-blind) Theme */
+.theme-deuteranopia {
+  --primary-color: #0ea5e9;
+  --secondary-color: #8b5cf6;
+  --accent-color: #8b5cf6;
+  --success-color: #06b6d4;
+  --warning-color: #f59e0b;
+  --error-color: #f59e0b;
+  --info-color: #06b6d4;
+}
+
+.theme-deuteranopia .bg-red-600,
+.theme-deuteranopia .bg-red-500,
+.theme-deuteranopia .text-red-400,
+.theme-deuteranopia .text-red-300,
+.theme-deuteranopia .border-red-500 {
+  background-color: #f59e0b !important;
+  color: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+.theme-deuteranopia .bg-green-600,
+.theme-deuteranopia .bg-green-500,
+.theme-deuteranopia .text-green-400,
+.theme-deuteranopia .text-green-300,
+.theme-deuteranopia .border-green-500 {
+  background-color: #8b5cf6 !important;
+  color: #8b5cf6 !important;
+  border-color: #8b5cf6 !important;
+}
+
+/* Tritanopia (Blue-blind) Theme */
+.theme-tritanopia {
+  --primary-color: #f59e0b;
+  --secondary-color: #ec4899;
+  --accent-color: #ec4899;
+  --success-color: #10b981;
+  --warning-color: #ec4899;
+  --error-color: #ef4444;
+  --info-color: #f59e0b;
+}
+
+.theme-tritanopia .bg-blue-600,
+.theme-tritanopia .bg-blue-500,
+.theme-tritanopia .text-blue-400,
+.theme-tritanopia .text-blue-300,
+.theme-tritanopia .border-blue-500 {
+  background-color: #f59e0b !important;
+  color: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+.theme-tritanopia .bg-yellow-600,
+.theme-tritanopia .bg-yellow-500,
+.theme-tritanopia .text-yellow-400,
+.theme-tritanopia .text-yellow-300,
+.theme-tritanopia .border-yellow-500 {
+  background-color: #ec4899 !important;
+  color: #ec4899 !important;
+  border-color: #ec4899 !important;
+}
+
+/* Achromatopsia (Total Color Blindness) Theme */
+.theme-achromatopsia {
+  --primary-color: #64748b;
+  --secondary-color: #94a3b8;
+  --accent-color: #cbd5e1;
+  --success-color: #94a3b8;
+  --warning-color: #64748b;
+  --error-color: #475569;
+  --info-color: #94a3b8;
+}
+
+.theme-achromatopsia * {
+  filter: grayscale(100%) !important;
+}
+
+.theme-achromatopsia .bg-blue-600,
+.theme-achromatopsia .bg-blue-500,
+.theme-achromatopsia .bg-green-600,
+.theme-achromatopsia .bg-green-500,
+.theme-achromatopsia .bg-red-600,
+.theme-achromatopsia .bg-red-500,
+.theme-achromatopsia .bg-yellow-600,
+.theme-achromatopsia .bg-yellow-500,
+.theme-achromatopsia .bg-purple-600,
+.theme-achromatopsia .bg-purple-500,
+.theme-achromatopsia .bg-indigo-600,
+.theme-achromatopsia .bg-indigo-500,
+.theme-achromatopsia .bg-orange-600,
+.theme-achromatopsia .bg-orange-500 {
+  background-color: #64748b !important;
+}
+
+.theme-achromatopsia .text-blue-400,
+.theme-achromatopsia .text-blue-300,
+.theme-achromatopsia .text-green-400,
+.theme-achromatopsia .text-green-300,
+.theme-achromatopsia .text-red-400,
+.theme-achromatopsia .text-red-300,
+.theme-achromatopsia .text-yellow-400,
+.theme-achromatopsia .text-yellow-300,
+.theme-achromatopsia .text-purple-400,
+.theme-achromatopsia .text-purple-300,
+.theme-achromatopsia .text-indigo-400,
+.theme-achromatopsia .text-indigo-300,
+.theme-achromatopsia .text-orange-400,
+.theme-achromatopsia .text-orange-300 {
+  color: #94a3b8 !important;
+}
+
+/* High Contrast Theme for Low Vision */
+.theme-high-contrast {
+  --primary-color: #ffffff;
+  --secondary-color: #000000;
+  --accent-color: #ffff00;
+  --success-color: #00ff00;
+  --warning-color: #ffff00;
+  --error-color: #ff0000;
+  --info-color: #00ffff;
+}
+
+.theme-high-contrast {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.theme-high-contrast .bg-dark-800,
+.theme-high-contrast .bg-dark-700,
+.theme-high-contrast .bg-dark-600 {
+  background: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+.theme-high-contrast .text-gray-300,
+.theme-high-contrast .text-gray-400,
+.theme-high-contrast .text-white {
+  color: #ffffff !important;
+}
+
+.theme-high-contrast .border-dark-700,
+.theme-high-contrast .border-dark-600,
+.theme-high-contrast .border-dark-500 {
+  border-color: #ffffff !important;
+}
+
+.theme-high-contrast button,
+.theme-high-contrast .accessibility-btn {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+.theme-high-contrast button:hover,
+.theme-high-contrast .accessibility-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Ensure color vision themes work with existing color classes */
+.theme-protanopia .text-red-500, .theme-protanopia .text-red-600, .theme-protanopia .text-red-400 { color: #f59e0b !important; }
+.theme-protanopia .bg-red-500, .theme-protanopia .bg-red-600 { background-color: #f59e0b !important; }
+.theme-protanopia .border-red-500, .theme-protanopia .border-red-600 { border-color: #f59e0b !important; }
+
+.theme-deuteranopia .text-green-500, .theme-deuteranopia .text-green-600, .theme-deuteranopia .text-green-400 { color: #8b5cf6 !important; }
+.theme-deuteranopia .bg-green-500, .theme-deuteranopia .bg-green-600 { background-color: #8b5cf6 !important; }
+.theme-deuteranopia .border-green-500, .theme-deuteranopia .border-green-600 { border-color: #8b5cf6 !important; }
+
+.theme-tritanopia .text-blue-500, .theme-tritanopia .text-blue-600, .theme-tritanopia .text-blue-400 { color: #f59e0b !important; }
+.theme-tritanopia .bg-blue-500, .theme-tritanopia .bg-blue-600 { background-color: #f59e0b !important; }
+.theme-tritanopia .border-blue-500, .theme-tritanopia .border-blue-600 { border-color: #f59e0b !important; }
+.theme-tritanopia .text-yellow-500, .theme-tritanopia .text-yellow-600, .theme-tritanopia .text-yellow-400 { color: #ec4899 !important; }
+.theme-tritanopia .bg-yellow-500, .theme-tritanopia .bg-yellow-600 { background-color: #ec4899 !important; }
+.theme-tritanopia .border-yellow-500, .theme-tritanopia .border-yellow-600 { border-color: #ec4899 !important; }
+
+/* Enhanced visibility for form elements in different themes */
+.theme-high-contrast input, 
+.theme-high-contrast select, 
+.theme-high-contrast textarea {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+.theme-high-contrast input:focus, 
+.theme-high-contrast select:focus, 
+.theme-high-contrast textarea:focus {
+  outline: 3px solid #ffff00 !important;
+  border-color: #ffff00 !important;
+}
+
+nav.bg-dark-800 .flex.items-center.space-x-3 {
+  min-height: 4rem;
+  align-items: center;
+}
+nav.bg-dark-800 .w-10.h-10 {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+nav.bg-dark-800 .font-bold.text-xl.text-white {
+  line-height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Prevent horizontal scroll and white at right */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Main content full width fix */
+#mainContent {
+  min-height: 100vh;
+  background: none;
+}
+
+/* Remove white background from aside (right sidebar) */
+nav.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Remove white background from left sidebar if any */
+#sidebarContainer {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Aurora Gradient Background */
+.aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -3;
+  pointer-events: none;
+  /* Animated aurora gradient with wave motion */
+  background: 
+    radial-gradient(ellipse 80% 60% at 50% 0%, #4ade80 0%, #38bdf8 40%, #6366f1 70%, #7c3aed 85%, #18181b 100%),
+    radial-gradient(ellipse 60% 40% at 20% 20%, #7c3aed 0%, #6366f1 30%, #38bdf8 60%, #4ade80 80%, transparent 100%),
+    radial-gradient(ellipse 70% 50% at 80% 30%, #38bdf8 0%, #4ade80 30%, #6366f1 60%, #7c3aed 80%, transparent 100%);
+  background-size: 100% 100%, 120% 120%, 110% 110%;
+  background-position: 50% 50%, 30% 20%, 70% 40%;
+  opacity: 1;
+  filter: blur(16px) saturate(1.2);
+  transition: opacity 0.5s;
+  animation: aurora-wave 8s ease-in-out infinite;
+}
+
+@keyframes aurora-wave {
+  0% {
+    background-position: 50% 50%, 30% 20%, 70% 40%;
+    filter: blur(16px) saturate(1.2) hue-rotate(0deg);
+  }
+  12.5% {
+    background-position: 60% 30%, 40% 10%, 80% 20%;
+    filter: blur(18px) saturate(1.3) hue-rotate(45deg);
+  }
+  25% {
+    background-position: 70% 40%, 50% 30%, 90% 50%;
+    filter: blur(14px) saturate(1.1) hue-rotate(90deg);
+  }
+  37.5% {
+    background-position: 40% 60%, 20% 40%, 60% 70%;
+    filter: blur(20px) saturate(1.4) hue-rotate(135deg);
+  }
+  50% {
+    background-position: 30% 70%, 10% 50%, 50% 80%;
+    filter: blur(16px) saturate(1.2) hue-rotate(180deg);
+  }
+  62.5% {
+    background-position: 20% 60%, 0% 40%, 40% 70%;
+    filter: blur(18px) saturate(1.3) hue-rotate(225deg);
+  }
+  75% {
+    background-position: 30% 50%, 10% 30%, 50% 60%;
+    filter: blur(14px) saturate(1.1) hue-rotate(270deg);
+  }
+  87.5% {
+    background-position: 40% 40%, 20% 20%, 60% 50%;
+    filter: blur(20px) saturate(1.4) hue-rotate(315deg);
+  }
+  100% {
+    background-position: 50% 50%, 30% 20%, 70% 40%;
+    filter: blur(16px) saturate(1.2) hue-rotate(360deg);
+  }
+}
+
+/* Glassy effect for main content cards (not sidebars) */
+.bg-white.rounded-xl,
+.bg-white.rounded-lg,
+.bg-white.p-8,
+.bg-white.p-6,
+.dark\:bg-dark-800.rounded-xl,
+.dark\:bg-dark-800.rounded-lg,
+.dark\:bg-dark-800.p-8,
+.dark\:bg-dark-800.p-6 {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(4px);
+}
+.dark .dark\:bg-dark-800.rounded-xl,
+.dark .dark\:bg-dark-800.rounded-lg,
+.dark .dark\:bg-dark-800.p-8,
+.dark .dark\:bg-dark-800.p-6 {
+  background: rgba(30, 41, 59, 0.55) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Uniform button and input radius */
+.button,
+.button-secondary,
+input[type='text'],
+input[type='search'],
+button,
+select,
+textarea,
+.rounded,
+.rounded-lg,
+.rounded-xl {
+  border-radius: 0.75rem !important;
+}
+    </style>
+</head>
+<body class="min-h-screen text-gray-900 dark:text-white">
+    <!-- Aurora Gradient Background -->
+    <div class="aurora-bg"></div>
+    <div class="container"></div>
+    <!-- Top Navigation Bar -->
+    <nav class="bg-dark-800 shadow-lg border-b border-dark-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo, Brand, and Sidebar Toggle -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Sahayak+ Logo" style="width: 40px; height: 40px; object-fit: contain;" />
+                    </div>
+                    <!-- Sidebar open/close buttons (mobile only) -->
+                    <button id="sidebarOpen" class="block lg:hidden text-white p-2 rounded-lg focus:outline-none" style="display:none;">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <button id="sidebarClose" class="block lg:hidden text-white p-2 rounded-lg focus:outline-none" style="display:none;">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <span class="font-bold text-xl text-white ml-2">Sahayak+</span>
+                    <span class="ml-2 relative inline-block align-middle overflow-hidden" style="height:1.5em; min-width: 11em; max-width: 16em; vertical-align:middle;">
+                        <span id="feature-rotator" class="absolute left-0 top-0 w-full h-full text-blue-300 text-lg font-bold transition-transform duration-500 ease-in-out flex items-center" style="letter-spacing:0.01em; white-space:nowrap;">Code</span>
+                    </span>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-2xl mx-8">
+                    <form id="googleSearchForm" class="relative" autocomplete="off" onsubmit="return false;">
+                        <input id="googleSearchInput" type="text" placeholder="Search teaching topics, subjects..." 
+                               class="w-full pl-10 pr-4 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Right Navigation -->
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-400 hover:text-blue-400 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.19 4.19A4 4 0 014 6v6a4 4 0 01-4 4h2a2 2 0 002 2h8a2 2 0 002-2h2a4 4 0 004-4V6a4 4 0 00-4-4H8a4 4 0 00-2.83 1.17z"></path>
+                        </svg>
+                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400"></span>
+                    </button>
+                    
+                    Sign Language Navigator
+                    <a href="/sign-language" class="flex items-center space-x-2 p-2 text-gray-300 hover:text-green-400 transition-colors rounded-lg hover:bg-dark-700" title="Sign Language Translator">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0115 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path>
+                        </svg>
+                        <span class="hidden lg:block text-sm font-medium">Sign Language</span>
+                    </a>
+                    
+                    <!-- Language Selector -->
+                    <div class="language-selector">
+                        <button id="languageToggle" class="flex items-center space-x-2 p-2 text-gray-300 hover:text-blue-400 transition-colors rounded-lg hover:bg-dark-700 cursor-pointer" type="button">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                            </svg>
+                            <span id="currentLanguage" class="text-sm font-medium">English</span>
+                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="languageDropdown" class="language-dropdown">
+                            <div class="language-option" data-lang="english" data-font="english-font">
+                                <div class="language-flag" style="background: linear-gradient(to bottom, #012169 0%, #012169 50%, #fff 50%, #fff 100%);"></div>
+                                <span>English</span>
+                            </div>
+                            <div class="language-option" data-lang="hindi" data-font="hindi-font">
+                                <div class="language-flag" style="background: linear-gradient(to bottom, #ff9933 0%, #ff9933 33%, #fff 33%, #fff 66%, #138808 66%, #138808 100%);"></div>
+                                <span>हिंदी</span>
+                            </div>
+                            <div class="language-option" data-lang="telugu" data-font="telugu-font">
+                                <div class="language-flag" style="background: linear-gradient(to bottom, #ff9933 0%, #ff9933 33%, #fff 33%, #fff 66%, #138808 66%, #138808 100%);"></div>
+                                <span>తెలుగు</span>
+                            </div>
+                            <div class="language-option" data-lang="kannada" data-font="kannada-font">
+                                <div class="language-flag" style="background: linear-gradient(to bottom, #ff9933 0%, #ff9933 33%, #fff 33%, #fff 66%, #138808 66%, #138808 100%);"></div>
+                                <span>ಕನ್ನಡ</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Vision Deficiency Support -->
+                    <div class="relative">
+                        <button id="cvdToggle" class="flex items-center space-x-2 p-2 text-gray-300 hover:text-blue-400 transition-colors rounded-lg hover:bg-dark-700" title="Color Vision Support">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <span class="hidden lg:block text-sm font-medium">Vision</span>
+                        </button>
+                        <div id="cvdDropdown" class="cvd-dropdown">
+                            <div class="mb-3">
+                                <label class="accessibility-label">Color Vision Support</label>
+                            </div>
+                            <div class="cvd-option active" data-theme="normal">
+                                <div class="cvd-preview" style="background: linear-gradient(45deg, #ef4444, #10b981, #3b82f6);"></div>
+                                <span>Normal Vision</span>
+                            </div>
+                            <div class="cvd-option" data-theme="protanopia">
+                                <div class="cvd-preview" style="background: linear-gradient(45deg, #f59e0b, #06b6d4, #0ea5e9);"></div>
+                                <span>Protanopia (Red-blind)</span>
+                            </div>
+                            <div class="cvd-option" data-theme="deuteranopia">
+                                <div class="cvd-preview" style="background: linear-gradient(45deg, #f59e0b, #8b5cf6, #0ea5e9);"></div>
+                                <span>Deuteranopia (Green-blind)</span>
+                            </div>
+                            <div class="cvd-option" data-theme="tritanopia">
+                                <div class="cvd-preview" style="background: linear-gradient(45deg, #ec4899, #10b981, #f59e0b);"></div>
+                                <span>Tritanopia (Blue-blind)</span>
+                            </div>
+                            <div class="cvd-option" data-theme="achromatopsia">
+                                <div class="cvd-preview" style="background: linear-gradient(45deg, #64748b, #94a3b8, #cbd5e1);"></div>
+                                <span>Achromatopsia (Monochrome)</span>
+                            </div>
+                            <div class="cvd-option" data-theme="high-contrast">
+                                <div class="cvd-preview" style="background: linear-gradient(45deg, #000000, #ffffff, #ffff00);"></div>
+                                <span>High Contrast</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Accessibility Controls -->
+                    <div class="relative">
+                        <button id="accessibilityToggle" class="flex items-center space-x-2 p-2 text-gray-300 hover:text-blue-400 transition-colors rounded-lg hover:bg-dark-700" title="Accessibility Settings">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="hidden lg:block text-sm font-medium">Accessibility</span>
+                        </button>
+                        <div id="accessibilityDropdown" class="accessibility-dropdown">
+                            <div class="accessibility-control">
+                                <label class="accessibility-label">Font Size</label>
+                                <div class="accessibility-buttons">
+                                    <button class="accessibility-btn" data-font-size="small">Small</button>
+                                    <button class="accessibility-btn active" data-font-size="normal">Normal</button>
+                                    <button class="accessibility-btn" data-font-size="large">Large</button>
+                                    <button class="accessibility-btn" data-font-size="xl">X-Large</button>
+                                    <button class="accessibility-btn" data-font-size="xxl">XX-Large</button>
+                                </div>
+                            </div>
+                            <div class="accessibility-control">
+                                <label class="accessibility-label">Text Spacing</label>
+                                <div class="accessibility-buttons">
+                                    <button class="accessibility-btn" data-spacing="compact">Compact</button>
+                                    <button class="accessibility-btn active" data-spacing="normal">Normal</button>
+                                    <button class="accessibility-btn" data-spacing="relaxed">Relaxed</button>
+                                    <button class="accessibility-btn" data-spacing="loose">Loose</button>
+                                </div>
+                            </div>
+                            <div class="accessibility-control">
+                                <label class="accessibility-label">Quick Actions</label>
+                                <div class="accessibility-buttons">
+                                    <button class="accessibility-btn" id="resetAccessibility">Reset to Default</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile -->
+                    <a href="{{ url_for('profile') }}" class="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-md overflow-hidden bg-gray-200 dark:bg-dark-700">
+                            <img src="/static/img/Gemini_Generated_Image_2yo13h2yo13h2yo1-2.png" alt="Mrs. Kavitha" class="w-8 h-8 object-cover" />
+                        </div>
+                        <span class="hidden md:block font-medium">Mrs. Kavitha</span>
+                    </a>
+                    
+                    <!-- Logout -->
+                    <a href="{{ url_for('logout') }}" class="text-gray-400 hover:text-red-400 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content with Sidebar -->
+    <div class="flex">
+        <!-- Sidebar Navigation (merged from left_sidebar.html) -->
+        <aside id="sidebarContainer" class="w-64 bg-dark-800 shadow-lg min-h-screen fixed top-0 left-0 transition-transform duration-300 ease-in-out z-50 -translate-x-full lg:sticky lg:top-16 lg:relative lg:translate-x-0 overflow-y-auto">
+            <div class="flex lg:hidden justify-end p-2">
+                <button id="sidebarCloseSidebar" class="text-gray-400 hover:text-white focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="{{ url_for('home') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 hover:scale-[1.03] active:scale-95 transition-all duration-200 ease-in-out shadow-sm {% if request.endpoint == 'home' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_home">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('tools') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'tools' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_ask_ai">Ask AI</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('ai_agent_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'ai_agent_page' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path d="M8 15s1.5 2 4 2 4-2 4-2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="9" cy="10" r="1" fill="currentColor"/>
+                                <circle cx="15" cy="10" r="1" fill="currentColor"/>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_ai_agent">AI Agent</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('sign_language_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'monitoringclass_page' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="font-medium">Sign Language Helper</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/diksha" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_diksha_library">DIKSHA Library</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/free-apis" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 919-9"></path>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_free_apis">Open Resources</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('dashboard') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'dashboard' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_dashboard">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('image_gen_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                <path d="M8 8h8M8 12h8M8 16h8"/>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_diagram_generator">Diagram Generator</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('code_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                <path d="M8 8h8M8 12h8M8 16h8"/>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_code_sahayak">Code Sahayak</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('timetable_page_form') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M16 2v4M8 2v4M3 10h18"/>
+                                <path d="M7 16h10"/>
+                            </svg>
+                            <span class="font-medium">Timetable & Circulars</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('nep_check_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            <span class="font-medium">NEP Compliance</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('lesson_planner_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'lesson_planner_page' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M16 2v4M8 2v4M3 10h18"/>
+                                <path d="M7 16h10"/>
+                            </svg>
+                            <span class="font-medium">Lesson Planner</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('find_videos') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                <path d="M8 8h8M8 12h8M8 16h8"/>
+                            </svg>
+                            <span class="font-medium">YouTube Video Recommendations</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('feedback_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            <span class="font-medium">Feedback</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('feed') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'feed' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_teaching_feed">Teaching Feed</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('analytics') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.endpoint == 'analytics' %}bg-blue-900/50 text-blue-400 border-r-2 border-blue-500{% else %}text-gray-300{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span class="font-medium" data-translate="sidebar_analytics">Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('wellbeing_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                            <span class="font-medium">Wellbeing</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('social_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"/>
+                            </svg>
+                            <span class="font-medium">Social Trends</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('parental_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span class="font-medium">Parental Engagement</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('assessment_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="font-medium">Assessment</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('translate_page') }}" class="nav-link flex items-center space-x-3 p-3 rounded-lg hover:bg-dark-700 transition-colors text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                            </svg>
+                            <span class="font-medium">Translation</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 transition-opacity duration-500 ease-in-out" id="mainContent" style="min-width:0;">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Right Tools Panel (Hidden on mobile) -->
+        <aside class="w-80 bg-dark-800 shadow-lg min-h-screen hidden lg:block sticky top-16">
+            {% include 'right_sidebar.html' %}
+        </aside>
+    </div>
+    <script>
+    // Google search redirect
+    const googleSearchForm = document.getElementById('googleSearchForm');
+    const googleSearchInput = document.getElementById('googleSearchInput');
+    if (googleSearchForm && googleSearchInput) {
+        googleSearchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const q = googleSearchInput.value.trim();
+            if (q) {
+                window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
+            }
+        });
+        googleSearchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                googleSearchForm.dispatchEvent(new Event('submit'));
+            }
+        });
+    }
+    </script>
+    <script>
+    // Sidebar open/close logic for mobile
+    const sidebarContainer = document.getElementById('sidebarContainer');
+    const sidebarCloseNav = document.getElementById('sidebarClose');
+    const sidebarCloseSidebar = document.getElementById('sidebarCloseSidebar');
+    const sidebarOpen = document.getElementById('sidebarOpen');
+    const mainContent = document.getElementById('mainContent');
+    function openSidebar() {
+        sidebarContainer.classList.remove('-translate-x-full');
+        sidebarContainer.classList.add('translate-x-0');
+        if (sidebarOpen) sidebarOpen.style.display = 'none';
+        if (sidebarCloseNav) sidebarCloseNav.style.display = '';
+        if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = '';
+        document.body.style.overflow = 'hidden';
+        if (mainContent) mainContent.style.filter = 'blur(2px)';
+    }
+    function closeSidebar() {
+        sidebarContainer.classList.add('-translate-x-full');
+        sidebarContainer.classList.remove('translate-x-0');
+        if (sidebarOpen) sidebarOpen.style.display = '';
+        if (sidebarCloseNav) sidebarCloseNav.style.display = 'none';
+        if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = 'none';
+        document.body.style.overflow = '';
+        if (mainContent) mainContent.style.filter = '';
+    }
+    function updateSidebarState() {
+        if (window.innerWidth < 1024) {
+            sidebarContainer.classList.add('fixed');
+            sidebarContainer.classList.remove('lg:sticky','lg:relative');
+            if (sidebarContainer.classList.contains('-translate-x-full')) {
+                if (sidebarOpen) sidebarOpen.style.display = '';
+                if (sidebarCloseNav) sidebarCloseNav.style.display = 'none';
+                if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = 'none';
+                if (mainContent) mainContent.style.marginLeft = '0';
+            } else {
+                if (sidebarOpen) sidebarOpen.style.display = 'none';
+                if (sidebarCloseNav) sidebarCloseNav.style.display = '';
+                if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = '';
+                if (mainContent) mainContent.style.marginLeft = '0';
+            }
+        } else {
+            sidebarContainer.classList.remove('fixed');
+            sidebarContainer.classList.add('lg:sticky','lg:relative');
+            sidebarContainer.classList.remove('-translate-x-full');
+            sidebarContainer.classList.add('translate-x-0');
+            if (sidebarOpen) sidebarOpen.style.display = 'none';
+            if (sidebarCloseNav) sidebarCloseNav.style.display = 'none';
+            if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = 'none';
+            if (mainContent) mainContent.style.marginLeft = '';
+        }
+    }
+    if (sidebarCloseNav) sidebarCloseNav.addEventListener('click', closeSidebar);
+    if (sidebarCloseSidebar) sidebarCloseSidebar.addEventListener('click', closeSidebar);
+    if (sidebarOpen) sidebarOpen.addEventListener('click', openSidebar);
+    window.addEventListener('resize', updateSidebarState);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar closed by default on mobile
+        if (window.innerWidth < 1024) {
+            sidebarContainer.classList.add('-translate-x-full');
+            sidebarContainer.classList.remove('translate-x-0');
+            if (sidebarOpen) sidebarOpen.style.display = '';
+            if (sidebarCloseNav) sidebarCloseNav.style.display = 'none';
+            if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = 'none';
+            if (mainContent) mainContent.style.marginLeft = '0';
+        } else {
+            sidebarContainer.classList.remove('-translate-x-full');
+            sidebarContainer.classList.add('translate-x-0');
+            if (sidebarOpen) sidebarOpen.style.display = 'none';
+            if (sidebarCloseNav) sidebarCloseNav.style.display = 'none';
+            if (sidebarCloseSidebar) sidebarCloseSidebar.style.display = 'none';
+            if (mainContent) mainContent.style.marginLeft = '';
+        }
+        updateSidebarState();
+        // Close sidebar on nav click (mobile)
+        document.querySelectorAll('#sidebarContainer .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 1024) closeSidebar();
+            });
+        });
+    });
+    </script>
+    <script>
+// Unique, short features from the pitch deck
+document.addEventListener('DOMContentLoaded', function() {
+    const features = [
+    "GapDetection", "BehaviorAI", "ReadingAssist", "PeerTeach", "NEPCheck",
+    "GuardianConnect", "TeacherCommunity", "KnowledgeQA", "StudentQA",
+    "VisualAids", "BoardImages", "AVExplain", "StoryGen", "Differentiation",
+    "MultilingualTTS", "InclusiveFonts", "DocScanner", "CSVTools",
+    "TelegramAccess", "DriveDrop", "DragDrop", "CalendarSync", "ClassroomSync",
+    "Bilingual", "Parental", "HomeworkUpdates", "Notifications", "AttendanceTrack",
+    "StudentReports", "Timetable", "Feedback", "Wellbeing", "Analytics",
+    "Worksheets", "Mindmaps", "Games", "Trends", "Assessment", "Code", "Offline"
+  ];
+  let idx = 0;
+  const rotator = document.getElementById('feature-rotator');
+  function showNextFeature() {
+    idx = (idx + 1) % features.length;
+    rotator.style.transform = 'translateY(-100%)';
+    setTimeout(() => {
+      rotator.textContent = features[idx];
+      rotator.style.transition = 'none';
+      rotator.style.transform = 'translateY(100%)';
+      setTimeout(() => {
+        rotator.style.transition = 'transform 0.5s';
+        rotator.style.transform = 'translateY(0)';
+      }, 10);
+    }, 500);
+  }
+  setInterval(showNextFeature, 2000);
+});
+    </script>
+    
+    <script>
+    // Robust language selector with font loading and debug logging
+    document.addEventListener('DOMContentLoaded', function() {
+        const languageToggle = document.getElementById('languageToggle');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentLanguage = document.getElementById('currentLanguage');
+        const languageOptions = Array.from(document.querySelectorAll('.language-option'));
+
+        const fontMap = {
+            'english-font': 'Nunito',
+            'hindi-font': 'Noto Sans Devanagari',
+            'telugu-font': 'Noto Sans Telugu',
+            'kannada-font': 'Noto Sans Kannada'
+        };
+
+        function applyFontClass(fontClass) {
+            const html = document.documentElement;
+            const body = document.body;
+            // Remove all font classes
+            Object.keys(fontMap).forEach(cls => {
+                html.classList.remove(cls);
+                body.classList.remove(cls);
+            });
+            // Add the new font class
+            html.classList.add(fontClass);
+            body.classList.add(fontClass);
+            // Debug: log computed font-family
+            setTimeout(() => {
+                const test = document.createElement('span');
+                test.textContent = 'Font test';
+                test.style.position = 'absolute';
+                test.style.left = '-9999px';
+                document.body.appendChild(test);
+                const computed = window.getComputedStyle(test).fontFamily;
+                console.log(`[DEBUG] Applied ${fontClass}, computed font-family:`, computed);
+                document.body.removeChild(test);
+            }, 100);
+        }
+
+        function switchLanguage(lang, fontClass) {
+            // Update current language display
+            const langNames = {
+                'english': 'English',
+                'hindi': 'हिंदी',
+                'telugu': 'తెలుగు',
+                'kannada': 'ಕನ್ನಡ'
+            };
+            currentLanguage.textContent = langNames[lang] || 'English';
+            // Save preference
+            localStorage.setItem('selectedLanguage', lang);
+            localStorage.setItem('selectedFont', fontClass);
+            // Wait for font to load, then apply
+            const fontName = fontMap[fontClass];
+            if (fontName && document.fonts && document.fonts.load) {
+                document.fonts.load(`1em ${fontName}`).then(() => {
+                    applyFontClass(fontClass);
+                    showIndicator(lang, fontClass);
+                });
+            } else {
+                applyFontClass(fontClass);
+                showIndicator(lang, fontClass);
+            }
+            // Update active state
+            languageOptions.forEach(opt => opt.classList.remove('active'));
+            const activeOpt = languageOptions.find(opt => opt.getAttribute('data-lang') === lang);
+            if (activeOpt) activeOpt.classList.add('active');
+            // Fire event for debug page
+            document.dispatchEvent(new CustomEvent('languageChanged', {
+                detail: { language: lang, font: fontClass }
+            }));
+        }
+        
+        function showIndicator(lang, fontClass) {
+            const indicator = document.createElement('div');
+            indicator.textContent = `Language: ${lang} (${fontClass})`;
+            indicator.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+                padding: 10px 20px; border-radius: 8px; z-index: 10000; font-weight: bold;
+            `;
+            document.body.appendChild(indicator);
+            setTimeout(() => indicator.remove(), 2000);
+        }
+
+        // Setup event listeners
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const lang = this.getAttribute('data-lang');
+                const fontClass = this.getAttribute('data-font');
+                switchLanguage(lang, fontClass);
+            });
+        });
+
+        // Dropdown toggle
+        languageToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const isVisible = languageDropdown.classList.contains('show');
+            if (isVisible) {
+                languageDropdown.classList.remove('show');
+            } else {
+                languageDropdown.classList.add('show');
+            }
+            // Rotate arrow
+            const arrow = this.querySelector('svg:last-child');
+            if (arrow) {
+                arrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (!languageToggle.contains(e.target) && !languageDropdown.contains(e.target)) {
+                languageDropdown.classList.remove('show');
+                const arrow = languageToggle.querySelector('svg:last-child');
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // On load, apply saved language
+        const savedLang = localStorage.getItem('selectedLanguage') || 'english';
+        const savedFont = localStorage.getItem('selectedFont') || 'english-font';
+        switchLanguage(savedLang, savedFont);
+    });
+    </script>
+    
+    <!-- Color Vision Deficiency Support JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cvdToggle = document.getElementById('cvdToggle');
+        const cvdDropdown = document.getElementById('cvdDropdown');
+        const cvdOptions = document.querySelectorAll('.cvd-option');
+        
+        // Toggle dropdown visibility
+        cvdToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            cvdDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!cvdToggle.contains(e.target) && !cvdDropdown.contains(e.target)) {
+                cvdDropdown.classList.remove('show');
+            }
+        });
+        
+        // Apply color vision theme
+        function applyColorVisionTheme(theme) {
+            const body = document.body;
+            const html = document.documentElement;
+            
+            // Remove all existing theme classes
+            const themeClasses = [
+                'theme-normal', 'theme-protanopia', 'theme-deuteranopia', 
+                'theme-tritanopia', 'theme-achromatopsia', 'theme-high-contrast'
+            ];
+            
+            themeClasses.forEach(className => {
+                body.classList.remove(className);
+                html.classList.remove(className);
+            });
+            
+            // Apply new theme
+            if (theme !== 'normal') {
+                body.classList.add(`theme-${theme}`);
+                html.classList.add(`theme-${theme}`);
+            }
+            
+            // Save preference
+            localStorage.setItem('colorVisionTheme', theme);
+            
+            // Update button states
+            cvdOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-theme') === theme);
+            });
+            
+            // Trigger a custom event for other scripts to respond to theme changes
+            window.dispatchEvent(new CustomEvent('colorVisionThemeChanged', { 
+                detail: { theme: theme } 
+            }));
+        }
+        
+        // Load saved theme on page load
+        function loadColorVisionTheme() {
+            const savedTheme = localStorage.getItem('colorVisionTheme') || 'normal';
+            applyColorVisionTheme(savedTheme);
+        }
+        
+        // Color vision option handlers
+        cvdOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const theme = this.getAttribute('data-theme');
+                applyColorVisionTheme(theme);
+                cvdDropdown.classList.remove('show');
+            });
+        });
+        
+        // Load theme on page load
+        loadColorVisionTheme();
+        
+        // Apply theme to dynamically loaded content
+        const themeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    const currentTheme = localStorage.getItem('colorVisionTheme') || 'normal';
+                    
+                    // Apply theme classes to newly added elements if not normal theme
+                    if (currentTheme !== 'normal') {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                // Apply theme-specific color corrections
+                                applyThemeToElement(node, currentTheme);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Helper function to apply theme to specific elements
+        function applyThemeToElement(element, theme) {
+            if (theme === 'protanopia') {
+                // Convert red elements for protanopia
+                if (element.classList.contains('text-red-400') || element.classList.contains('text-red-300')) {
+                    element.style.color = '#f59e0b';
+                }
+                if (element.classList.contains('bg-red-600') || element.classList.contains('bg-red-500')) {
+                    element.style.backgroundColor = '#f59e0b';
+                }
+            } else if (theme === 'deuteranopia') {
+                // Convert green elements for deuteranopia
+                if (element.classList.contains('text-green-400') || element.classList.contains('text-green-300')) {
+                    element.style.color = '#8b5cf6';
+                }
+                if (element.classList.contains('bg-green-600') || element.classList.contains('bg-green-500')) {
+                    element.style.backgroundColor = '#8b5cf6';
+                }
+            } else if (theme === 'tritanopia') {
+                // Convert blue/yellow elements for tritanopia
+                if (element.classList.contains('text-blue-400') || element.classList.contains('text-blue-300')) {
+                    element.style.color = '#f59e0b';
+                }
+                if (element.classList.contains('bg-blue-600') || element.classList.contains('bg-blue-500')) {
+                    element.style.backgroundColor = '#f59e0b';
+                }
+            } else if (theme === 'achromatopsia') {
+                // Apply grayscale filter
+                element.style.filter = 'grayscale(100%)';
+            } else if (theme === 'high-contrast') {
+                // Apply high contrast colors
+                if (element.classList.contains('text-gray-300') || element.classList.contains('text-gray-400')) {
+                    element.style.color = '#ffffff';
+                }
+                if (element.classList.contains('bg-dark-800') || element.classList.contains('bg-dark-700')) {
+                    element.style.backgroundColor = '#000000';
+                    element.style.borderColor = '#ffffff';
+                }
+            }
+        }
+        
+        // Start observing changes
+        themeObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        // Keyboard accessibility for CVD controls
+        cvdToggle.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                cvdDropdown.classList.toggle('show');
+            }
+        });
+        
+        cvdOptions.forEach((option, index) => {
+            option.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const theme = this.getAttribute('data-theme');
+                    applyColorVisionTheme(theme);
+                    cvdDropdown.classList.remove('show');
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const nextIndex = (index + 1) % cvdOptions.length;
+                    cvdOptions[nextIndex].focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prevIndex = (index - 1 + cvdOptions.length) % cvdOptions.length;
+                    cvdOptions[prevIndex].focus();
+                } else if (e.key === 'Escape') {
+                    cvdDropdown.classList.remove('show');
+                    cvdToggle.focus();
+                }
+            });
+            
+            // Make options focusable
+            option.setAttribute('tabindex', '0');
+        });
+    });
+    </script>
+    
+    <!-- Accessibility Controls JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const accessibilityToggle = document.getElementById('accessibilityToggle');
+        const accessibilityDropdown = document.getElementById('accessibilityDropdown');
+        const fontSizeButtons = document.querySelectorAll('[data-font-size]');
+        const spacingButtons = document.querySelectorAll('[data-spacing]');
+        const resetButton = document.getElementById('resetAccessibility');
+        
+        // Toggle dropdown visibility
+        accessibilityToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            accessibilityDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!accessibilityToggle.contains(e.target) && !accessibilityDropdown.contains(e.target)) {
+                accessibilityDropdown.classList.remove('show');
+            }
+        });
+        
+        // Load saved settings
+        function loadAccessibilitySettings() {
+            const savedFontSize = localStorage.getItem('accessibilityFontSize') || 'normal';
+            const savedSpacing = localStorage.getItem('accessibilitySpacing') || 'normal';
+            
+            applyFontSize(savedFontSize);
+            applySpacing(savedSpacing);
+            
+            // Update button states
+            fontSizeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-font-size') === savedFontSize);
+            });
+            spacingButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-spacing') === savedSpacing);
+            });
+        }
+        
+        // Apply font size changes
+        function applyFontSize(size) {
+            const body = document.body;
+            const contentAreas = [
+                'main', '.content', '#content', 
+                '.bg-dark-800', '.text-white', '.text-gray-300', '.text-gray-400',
+                'p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'label', 'input', 'textarea', 'select', 'button'
+            ];
+            
+            // Remove existing font size classes
+            body.classList.remove('font-size-small', 'font-size-normal', 'font-size-large', 'font-size-xl', 'font-size-xxl');
+            
+            // Add accessibility font size class to body
+            body.classList.add('accessibility-font-size');
+            
+            // Apply new font size class
+            body.classList.add(`font-size-${size}`);
+            
+            // Apply to all content areas
+            contentAreas.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    element.classList.remove('font-size-small', 'font-size-normal', 'font-size-large', 'font-size-xl', 'font-size-xxl');
+                    element.classList.add(`font-size-${size}`);
+                });
+            });
+            
+            localStorage.setItem('accessibilityFontSize', size);
+        }
+        
+        // Apply spacing changes
+        function applySpacing(spacing) {
+            const body = document.body;
+            const contentAreas = [
+                'main', '.content', '#content', 
+                '.bg-dark-800', '.text-white', '.text-gray-300', '.text-gray-400',
+                'p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'label'
+            ];
+            
+            // Remove existing spacing classes
+            body.classList.remove('spacing-compact', 'spacing-normal', 'spacing-relaxed', 'spacing-loose');
+            
+            // Apply new spacing class
+            body.classList.add(`spacing-${spacing}`);
+            
+            // Apply to all content areas
+            contentAreas.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    element.classList.remove('spacing-compact', 'spacing-normal', 'spacing-relaxed', 'spacing-loose');
+                    element.classList.add(`spacing-${spacing}`);
+                });
+            });
+            
+            localStorage.setItem('accessibilitySpacing', spacing);
+        }
+        
+        // Font size button handlers
+        fontSizeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const size = this.getAttribute('data-font-size');
+                applyFontSize(size);
+                
+                // Update button states
+                fontSizeButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Spacing button handlers
+        spacingButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const spacing = this.getAttribute('data-spacing');
+                applySpacing(spacing);
+                
+                // Update button states
+                spacingButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Reset button handler
+        resetButton.addEventListener('click', function() {
+            localStorage.removeItem('accessibilityFontSize');
+            localStorage.removeItem('accessibilitySpacing');
+            
+            applyFontSize('normal');
+            applySpacing('normal');
+            
+            // Reset button states
+            fontSizeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-font-size') === 'normal');
+            });
+            spacingButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-spacing') === 'normal');
+            });
+        });
+        
+        // Load settings on page load
+        loadAccessibilitySettings();
+        
+        // Apply settings to dynamically loaded content
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    const savedFontSize = localStorage.getItem('accessibilityFontSize') || 'normal';
+                    const savedSpacing = localStorage.getItem('accessibilitySpacing') || 'normal';
+                    
+                    // Apply to newly added elements
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            node.classList.add(`font-size-${savedFontSize}`);
+                            node.classList.add(`spacing-${savedSpacing}`);
+                            
+                            // Apply to child elements too
+                            const childElements = node.querySelectorAll('*');
+                            childElements.forEach(child => {
+                                child.classList.add(`font-size-${savedFontSize}`);
+                                child.classList.add(`spacing-${savedSpacing}`);
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Start observing changes to body
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        // Add keyboard shortcuts for font size controls
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Alt+R to reset font size
+            if (e.ctrlKey && e.altKey && e.key === 'r') {
+                e.preventDefault();
+                document.getElementById('resetAccessibility').click();
+            }
+            // Ctrl+Alt+0 to set normal font size
+            if (e.ctrlKey && e.altKey && e.key === '0') {
+                e.preventDefault();
+                const normalBtn = document.querySelector('[data-font-size="normal"]');
+                if (normalBtn) normalBtn.click();
+            }
+            // Ctrl+Alt+Plus to increase font size
+            if (e.ctrlKey && e.altKey && e.key === '+') {
+                e.preventDefault();
+                const currentSize = localStorage.getItem('accessibilityFontSize') || 'normal';
+                const sizes = ['small', 'normal', 'large', 'xl', 'xxl'];
+                const currentIndex = sizes.indexOf(currentSize);
+                if (currentIndex < sizes.length - 1) {
+                    const nextBtn = document.querySelector(`[data-font-size="${sizes[currentIndex + 1]}"]`);
+                    if (nextBtn) nextBtn.click();
+                }
+            }
+            // Ctrl+Alt+Minus to decrease font size
+            if (e.ctrlKey && e.altKey && e.key === '-') {
+                e.preventDefault();
+                const currentSize = localStorage.getItem('accessibilityFontSize') || 'normal';
+                const sizes = ['small', 'normal', 'large', 'xl', 'xxl'];
+                const currentIndex = sizes.indexOf(currentSize);
+                if (currentIndex > 0) {
+                    const prevBtn = document.querySelector(`[data-font-size="${sizes[currentIndex - 1]}"]`);
+                    if (prevBtn) prevBtn.click();
+                }
+            }
+        });
+    });
+    </script>
+    
+    <!-- Floating Font Reset Button (always visible) -->
+    <div id="floatingFontReset" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: none;">
+        <button onclick="document.getElementById('resetAccessibility').click()" 
+                style="background: #3d6aff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; flex-direction: column;"
+                title="Reset Font Size (Ctrl+Alt+R)">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8v5h-5l2.26-2.26A6.97 6.97 0 0 0 12 6a6 6 0 1 0 6 6h3a9 9 0 0 1-18 0z"/>
+            </svg>
+            <span style="font-size: 10px; margin-top: 2px;">Reset</span>
+        </button>
+    </div>
+    
+    <script>
+    // Show floating reset button when font size is not normal
+    function updateFloatingResetButton() {
+        const currentSize = localStorage.getItem('accessibilityFontSize') || 'normal';
+        const floatingBtn = document.getElementById('floatingFontReset');
+        if (currentSize !== 'normal') {
+            floatingBtn.style.display = 'block';
+        } else {
+            floatingBtn.style.display = 'none';
+        }
+    }
+    
+    // Update button visibility on font size changes
+    document.addEventListener('DOMContentLoaded', function() {
+        updateFloatingResetButton();
+        
+        // Listen for font size changes
+        const fontSizeButtons = document.querySelectorAll('[data-font-size]');
+        fontSizeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                setTimeout(updateFloatingResetButton, 100);
+            });
+        });
+        
+        // Listen for reset button clicks
+        document.getElementById('resetAccessibility').addEventListener('click', function() {
+            setTimeout(updateFloatingResetButton, 100);
+        });
+    });
+    </script>
+    
+    <!-- Eye Tracking Integration -->
+    <script src="{{ url_for('static', filename='js/eye_control.js') }}"></script>
+</body>
+</html>

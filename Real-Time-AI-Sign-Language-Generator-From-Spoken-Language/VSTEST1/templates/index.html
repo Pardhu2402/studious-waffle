@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Translator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --primary-color: #64b5f6;
+            --secondary-color: #2d2d2d;
+        }
+        
+        body {
+            transition: background-color 0.3s ease;
+        }
+        
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        video, img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+        
+        .controls {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            background: var(--secondary-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .status-active {
+            background-color: #28a745;
+            box-shadow: 0 0 8px #28a745;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .status-inactive {
+            background-color: #dc3545;
+        }
+        
+        .feedback-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .language-option {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .language-option.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+        
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-2px);
+        }
+        
+        .input-group .btn {
+            margin-left: 5px;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+        }
+        
+        .sign-video {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Hide video controls */
+        video::-webkit-media-controls {
+            display: none !important;
+        }
+        
+        video::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+        
+        video::-webkit-media-controls-panel {
+            display: none !important;
+        }
+        
+        /* For Firefox */
+        .sign-video {
+            -moz-user-select: none;
+        }
+        
+        /* For IE/Edge */
+        video::-ms-media-controls {
+            display: none !important;
+        }
+        
+        .speed-btn {
+            transition: all 0.3s ease;
+            border: 1px solid #6c757d;
+        }
+        
+        .speed-btn.active {
+            background-color: #6c757d !important;
+            color: white !important;
+            border-color: #6c757d !important;
+            font-weight: bold;
+        }
+        
+        .speed-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn-group .speed-btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Ensure buttons maintain their state */
+        .speed-btn:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
+        /* Make video container more responsive */
+        #signVideo {
+            max-width: 100%;
+            height: auto;
+            margin: auto;
+        }
+        
+        #signImage {
+            max-width: 100%;
+            height: auto;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">
+            <i class="bi bi-translate"></i>
+            Sign Language Translator
+        </h1>
+        
+        <div class="controls">
+            <div class="language-selector mb-4">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <h5 class="text-center mb-2">International</h5>
+                        <div class="d-flex gap-2">
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('isl')" id="isl-option">
+                                <i class="bi bi-globe2"></i>
+                                Indian Sign Language
+                            </div>
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('asl')" id="asl-option">
+                                <i class="bi bi-globe-americas"></i>
+                                American Sign Language
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <h5 class="text-center mb-2">Regional</h5>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('hindi')" id="hindi-option">
+                                <i class="bi bi-translate"></i>
+                                हिंदी
+                            </div>
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('telugu')" id="telugu-option">
+                                <i class="bi bi-translate"></i>
+                                తెలుగు
+                            </div>
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('gujarati')" id="gujarati-option">
+                                <i class="bi bi-translate"></i>
+                                ગુજરાતી
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Playback Speed</label>
+                <div class="btn-group" role="group" aria-label="Playback Speed">
+                    <button type="button" class="btn btn-outline-secondary speed-btn" data-speed="0.5" onclick="setPlaybackSpeed(0.5)">0.5x</button>
+                    <button type="button" class="btn btn-outline-secondary speed-btn active" data-speed="1.0" onclick="setPlaybackSpeed(1.0)">1x</button>
+                    <button type="button" class="btn btn-outline-secondary speed-btn" data-speed="1.5" onclick="setPlaybackSpeed(1.5)">1.5x</button>
+                    <button type="button" class="btn btn-outline-secondary speed-btn" data-speed="2.0" onclick="setPlaybackSpeed(2.0)">2x</button>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="textInput" 
+                           placeholder="Type text to translate">
+                    <button class="btn btn-primary" onclick="translateText()">
+                        <i class="bi bi-translate"></i> Translate
+                    </button>
+                    <button class="btn btn-warning" onclick="resetSigns()">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center">
+                    <div id="statusIndicator" class="status-indicator status-inactive"></div>
+                    <span id="statusText">Select Language</span>
+                </div>
+                <button class="btn btn-success" id="toggleAudio">
+                    <i class="bi bi-mic-fill"></i> Start Live Translation
+                </button>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <video id="signVideo" 
+                   class="sign-video" 
+                   autoplay 
+                   muted 
+                   playsinline 
+                   disablePictureInPicture 
+                   controlsList="nodownload noplaybackrate" 
+                   oncontextmenu="return false;">
+                <source src="" type="video/mp4">
+            </video>
+            <img id="signImage" style="display: none;">
+        </div>
+
+        <div class="upload-container">
+            <h3><i class="bi bi-upload"></i> Add New Sign</h3>
+            <div class="card">
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="wordInput" class="form-label">Word/Phrase:</label>
+                            <input type="text" class="form-control" id="wordInput" 
+                                   placeholder="Enter the word or phrase for this sign" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="languageSelect" class="form-label">Sign Language:</label>
+                            <select class="form-control" id="languageSelect" required>
+                                <option value="asl">American Sign Language (ASL)</option>
+                                <option value="isl">Indian Sign Language (ISL)</option>
+                                <option value="hindi">Hindi Sign Language</option>
+                                <option value="telugu">Telugu Sign Language</option>
+                                <option value="gujarati">Gujarati Sign Language</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fileType" class="form-label">File Type:</label>
+                            <select class="form-control" id="fileType" required>
+                                <option value="video">Video</option>
+                                <option value="image">Image</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fileInput" class="form-label">Upload File:</label>
+                            <input type="file" class="form-control" id="fileInput" 
+                                   accept="video/mp4,image/jpeg,image/jpg,image/png" required>
+                            <small class="text-muted">Accepted formats: MP4 video or JPG/PNG images</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (Optional):</label>
+                            <textarea class="form-control" id="description" rows="2"
+                                    placeholder="Add any additional information about this sign"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-cloud-upload"></i> Upload Sign
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-resources-container">
+            <h3><i class="bi bi-book"></i> Learning Resources</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h4 class="resource-title">American Sign Language (ASL)</h4>
+                            <div class="resource-links">
+                                <a href="https://www.spreadthesign.com" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> Spread the Sign (ASL)
+                                </a>
+                                <a href="https://www.handspeak.com" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> Handspeak (ASL Dictionary)
+                                </a>
+                                <a href="https://www.signingsavvy.com" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> Signing Savvy (ASL Dictionary)
+                                </a>
+                                <a href="https://www.aslpro.com" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> ASL Pro Dictionary
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <h4 class="resource-title">Indian Sign Language (ISL)</h4>
+                            <div class="resource-links">
+                                <a href="http://indiansignlanguage.org" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> Indian Sign Language Dictionary (NISH)
+                                </a>
+                                <a href="http://www.islrtc.nic.in" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> ISLRTC (Research & Training Centre)
+                                </a>
+                                <a href="https://signlearn.org" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> Sign Learn (ISL Video Dictionary)
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <h4 class="resource-title">Regional Sign Language Resources</h4>
+                            <div class="resource-links">
+                                <a href="http://indiansignlanguage.org/dictionary" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> ISL Dictionary - Indian Sign Language Research
+                                </a>
+                                <a href="https://www.youtube.com/c/IndianSignLanguageNIHH" target="_blank" class="resource-link">
+                                    <i class="bi bi-link-45deg"></i> Indian Sign Language by NIHH (YouTube Channel)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback-container">
+            <h3><i class="bi bi-chat-square-text"></i> Feedback</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="originalInput" class="form-label">Original Text:</label>
+                        <input type="text" class="form-control" id="originalInput" 
+                               placeholder="Enter the text you tried to translate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="correctionInput" class="form-label">Suggest a correction:</label>
+                        <textarea class="form-control" id="correctionInput" rows="3" 
+                                placeholder="Enter your suggested translation"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitFeedback()">
+                        <i class="bi bi-send"></i> Submit Feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="output-container">
+            <!-- Transcribed text and sentiment will be added here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let isStreaming = false;
+        let eventSource = null;
+        let currentVideoPromise = null;
+        let pendingText = '';
+        let selectedLanguage = 'asl'; // Default language
+        let currentPlaybackSpeed = 1.0; // Default to 1x speed
+        let isReset = false;
+        
+        // Update language selection UI
+        function selectLanguage(language) {
+            selectedLanguage = language;
+            
+            // Update UI
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.getElementById(`${language}-option`).classList.add('active');
+            
+            // Update status text
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = `${language.toUpperCase()} Selected`;
+            
+            // Send language selection to server
+            fetch('/select_language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                console.log(`${language.toUpperCase()} model selected`);
+            })
+            .catch(error => {
+                console.error('Error selecting language:', error);
+                alert('Error selecting language. Please try again.');
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            selectLanguage('asl');  // Set default language
+        });
+        
+        document.getElementById('toggleAudio').addEventListener('click', async () => {
+            if (!selectedLanguage) {
+                alert('Please select a sign language first');
+                return;
+            }
+            
+            if (!isStreaming) {
+                startLiveTranslation();
+            } else {
+                stopLiveTranslation();
+            }
+        });
+        
+        async function startLiveTranslation() {
+            if (!selectedLanguage) {
+                alert('Please select a sign language first');
+                return;
+            }
+            
+            // Stop any existing translation first
+            await stopLiveTranslation();
+            
+            // Reset flags for new translation
+            isReset = false;
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 16000,
+                        channelCount: 1
+                    }
+                });
+                
+                window.audioStream = stream;
+                eventSource = new EventSource('/start_stream');
+                
+                eventSource.onmessage = async (event) => {
+                    // Check reset flag first
+                    if (isReset) {
+                        eventSource.close();
+                        return;
+                    }
+                    
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (data.error) {
+                            console.error('Stream error:', data.error);
+                            alert(data.error);
+                            await stopLiveTranslation();
+                            return;
+                        }
+                        
+                        // Process only if not reset
+                        if (!isReset) {
+                            // Handle single word updates
+                            if (data.text && data.is_word) {
+                                console.log('New word recognized:', data.text);
+                                await processRecognizedText(data.text, data.language || selectedLanguage);
+                            }
+                            // Handle full text updates (for display only)
+                            else if (data.text && data.is_full) {
+                                document.getElementById('textInput').value = data.text;
+                            }
+                            // Handle partial text
+                            else if (data.partial) {
+                                document.getElementById('textInput').value = data.partial + '...';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error processing message:', error);
+                    }
+                };
+                
+                eventSource.onerror = async (error) => {
+                    console.error('EventSource error:', error);
+                    await stopLiveTranslation();
+                };
+                
+                isStreaming = true;
+                updateStatus(true);
+                document.getElementById('toggleAudio').innerHTML = '<i class="bi bi-mic-mute-fill"></i> Stop Live Translation';
+                document.getElementById('toggleAudio').classList.replace('btn-success', 'btn-danger');
+                
+            } catch (error) {
+                console.error('Microphone Error:', error);
+                alert('Please allow microphone access to use live translation.');
+                updateStatus(false);
+            }
+        }
+        
+        async function processRecognizedText(text, language) {
+            if (!text || isReset) return;
+            
+            try {
+                // Cancel any currently playing sequence
+                if (currentVideoPromise) {
+                    currentVideoPromise.cancel = true;
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+                
+                const response = await fetch('/translate_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        text,
+                        language: language
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    console.error('Translation error:', data.error);
+                    return;
+                }
+                
+                if (data.video_paths && data.video_paths.length > 0 && !isReset) {
+                    // Play signs immediately
+                    await playSignSequence(data);
+                }
+            } catch (error) {
+                console.error('Error in processRecognizedText:', error);
+            }
+        }
+        
+        async function stopLiveTranslation() {
+            try {
+                // Set flags immediately
+                isReset = true;
+                isStreaming = false;
+                
+                // Stop audio stream first
+                if (window.audioStream) {
+                    const tracks = window.audioStream.getTracks();
+                    tracks.forEach(track => track.stop());
+                    window.audioStream = null;
+                }
+                
+                // Close event source
+                if (eventSource) {
+                    eventSource.close();
+                    eventSource = null;
+                    try {
+                        await fetch('/stop_stream', { 
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    } catch (error) {
+                        console.error('Error stopping stream:', error);
+                    }
+                }
+                
+                // Clean up media elements
+                cleanupMedia();
+                
+                // Update UI
+                updateStatus(false);
+                document.getElementById('toggleAudio').innerHTML = '<i class="bi bi-mic-fill"></i> Start Live Translation';
+                document.getElementById('toggleAudio').classList.replace('btn-danger', 'btn-success');
+                
+            } catch (error) {
+                console.error('Error in stopLiveTranslation:', error);
+            }
+        }
+        
+        function updateStatus(active) {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (active) {
+                indicator.classList.replace('status-inactive', 'status-active');
+                statusText.textContent = `${selectedLanguage.toUpperCase()} - Microphone Active`;
+            } else {
+                indicator.classList.replace('status-active', 'status-inactive');
+                statusText.textContent = `${selectedLanguage.toUpperCase()} - Microphone Inactive`;
+            }
+        }
+        
+        async function translateText() {
+            if (!selectedLanguage) {
+                alert('Please select a sign language first');
+                return;
+            }
+            
+            const text = document.getElementById('textInput').value;
+            if (!text) {
+                alert('Please enter text to translate');
+                return;
+            }
+            
+            // Reset the reset flag when starting new translation
+            isReset = false;
+            
+            // Reset signs but don't clear input
+            const video = document.getElementById('signVideo');
+            video.pause();
+            video.currentTime = 0;
+            video.style.display = 'none';
+            
+            const image = document.getElementById('signImage');
+            image.style.display = 'none';
+            
+            try {
+                const response = await fetch('/translate_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        text,
+                        language: selectedLanguage
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                if (data.video_paths && !isReset) {
+                    await playSignSequence(data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error translating text. Please try again.');
+            }
+        }
+        
+        async function playSignSequence(data) {
+            const video = document.getElementById('signVideo');
+            const image = document.getElementById('signImage');
+            
+            currentVideoPromise = { cancel: false };
+            
+            try {
+                for (let i = 0; i < data.video_paths.length && !isReset; i++) {
+                    if (currentVideoPromise.cancel) break;
+                    
+                    const path = data.video_paths[i];
+                    
+                    if (path.endsWith('.mp4')) {
+                        video.style.display = 'block';
+                        image.style.display = 'none';
+                        video.src = `/media/${path}`;
+                        
+                        await new Promise((resolve, reject) => {
+                            video.onloadedmetadata = async () => {
+                                if (isReset) {
+                                    resolve();
+                                    return;
+                                }
+                                
+                                video.playbackRate = currentPlaybackSpeed;
+                                
+                                // Check if filename is uppercase (like CAMERA.mp4)
+                                const filename = path.split('/').pop().split('.')[0];
+                                const isUpperCase = filename === filename.toUpperCase() && filename !== filename.toLowerCase();
+                                
+                                try {
+                                    if (isUpperCase) {
+                                        // Play full video for uppercase filenames
+                                        await video.play();
+                                        // Wait for video to complete
+                                        await new Promise(videoResolve => {
+                                            video.onended = () => {
+                                                setTimeout(videoResolve, 300); // Add delay after video
+                                            };
+                                        });
+                                    } else {
+                                        // Play half duration for lowercase filenames
+                                        await video.play();
+                                        const halfDuration = video.duration / 2;
+                                        await new Promise(timeResolve => {
+                                            setTimeout(() => {
+                                                if (!isReset) {
+                                                    video.pause();
+                                                    video.currentTime = 0;
+                                                }
+                                                timeResolve();
+                                            }, (halfDuration * 1000) / currentPlaybackSpeed);
+                                        });
+                                        // Add delay after video
+                                        await new Promise(delayResolve => 
+                                            setTimeout(delayResolve, 300)
+                                        );
+                                    }
+                                    resolve();
+                                } catch (err) {
+                                    reject(err);
+                                }
+                            };
+                            
+                            video.onerror = reject;
+                        });
+                    } else if (path.endsWith('.jpg')) {
+                        if (isReset) break;
+                        video.style.display = 'none';
+                        image.style.display = 'block';
+                        image.src = `/media/${path}`;
+                        
+                        // Different timing for space and regular images
+                        await new Promise(resolve => {
+                            let displayTime;
+                            if (path.includes('space_test.jpg') || path.includes('nothing_test.jpg')) {
+                                displayTime = 300; // Shorter duration for space/nothing
+                            } else {
+                                displayTime = isStreaming ? 400 : 800; // Regular timing for letters
+                            }
+                            const timer = setTimeout(resolve, displayTime / currentPlaybackSpeed);
+                            if (isReset) {
+                                clearTimeout(timer);
+                                resolve();
+                            }
+                        });
+                    }
+                    
+                    // Add consistent delay between all signs
+                    if (!isReset && i < data.video_paths.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                }
+            } catch (error) {
+                console.error('Error playing sign sequence:', error);
+            } finally {
+                if (!currentVideoPromise.cancel && !isReset) {
+                    video.pause();
+                    video.currentTime = 0;
+                    video.style.display = 'none';
+                    image.style.display = 'none';
+                }
+            }
+        }
+
+        function setPlaybackSpeed(speed) {
+            currentPlaybackSpeed = parseFloat(speed);
+            
+            // Update UI
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                if (parseFloat(btn.getAttribute('data-speed')) === currentPlaybackSpeed) {
+                    btn.classList.add('active');
+                    btn.style.backgroundColor = '#6c757d';
+                    btn.style.color = 'white';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.backgroundColor = '';
+                    btn.style.color = '';
+                }
+            });
+            
+            // Update current video if playing
+            const video = document.getElementById('signVideo');
+            if (video) {
+                video.playbackRate = currentPlaybackSpeed;
+            }
+            
+            console.log('Playback speed set to:', currentPlaybackSpeed);
+        }
+
+        function resetSigns() {
+            // Set reset flag first
+            isReset = true;
+            
+            // Stop live translation first if active
+            if (isStreaming) {
+                stopLiveTranslation();
+                return; // Let stopLiveTranslation handle the cleanup
+            }
+            
+            // For non-streaming cleanup
+            cleanupMedia();
+        }
+
+        function cleanupMedia() {
+            // Cancel any currently playing sequence
+            if (currentVideoPromise) {
+                currentVideoPromise.cancel = true;
+            }
+            
+            // Stop and hide video
+            const video = document.getElementById('signVideo');
+            video.pause();
+            video.currentTime = 0;
+            video.style.display = 'none';
+            
+            // Hide image
+            const image = document.getElementById('signImage');
+            image.style.display = 'none';
+            
+            // Clear pending text
+            document.getElementById('textInput').value = '';
+            
+            // Update status
+            const statusText = document.getElementById('statusText');
+            if (selectedLanguage) {
+                statusText.textContent = `${selectedLanguage.toUpperCase()} Selected`;
+            }
+            
+            // Clear any ongoing timeouts
+            const highestTimeoutId = setTimeout(";");
+            for (let i = 0; i < highestTimeoutId; i++) {
+                clearTimeout(i);
+            }
+        }
+
+        // Update the submitFeedback function
+        function submitFeedback() {
+            const originalText = document.getElementById('originalInput').value;
+            const correctionText = document.getElementById('correctionInput').value;
+            
+            if (!originalText || !correctionText) {
+                alert('Please enter both the original text and your suggested correction');
+                return;
+            }
+            
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    original: originalText,
+                    correction: correctionText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    alert('Thank you for your feedback!');
+                    document.getElementById('originalInput').value = '';
+                    document.getElementById('correctionInput').value = '';
+                } else {
+                    throw new Error(data.error || 'Failed to submit feedback');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting feedback: ' + error.message);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('signVideo');
+            
+            // Prevent right-click
+            video.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+            
+            // Prevent keyboard controls
+            video.addEventListener('keydown', function(e) {
+                e.preventDefault();
+            });
+            
+            // Auto-replay handling
+            video.addEventListener('ended', function() {
+                video.style.display = 'none';
+            });
+            
+            // Initialize speed buttons with proper styling
+            setPlaybackSpeed(1.0);
+            
+            // Add click event listeners to speed buttons
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const speed = parseFloat(this.getAttribute('data-speed'));
+                    setPlaybackSpeed(speed);
+                });
+            });
+        });
+
+        // Function to play video
+        function playSignVideo(videoPath) {
+            const video = document.getElementById('signVideo');
+            video.style.display = 'block';
+            video.src = videoPath;
+            video.play().catch(function(error) {
+                console.log("Video play error:", error);
+            });
+        }
+    </script>
+</body>
+</html> 

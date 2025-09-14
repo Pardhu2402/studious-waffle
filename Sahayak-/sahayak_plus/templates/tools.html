@@ -1,0 +1,1281 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+button {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid rgb(61, 106, 255);
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+button:hover {
+  background: rgb(61, 106, 255);
+  box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+button:hover::before {
+  -webkit-animation: sh02 0.5s 0s linear;
+  -moz-animation: sh02 0.5s 0s linear;
+  animation: sh02 0.5s 0s linear;
+}
+button::before {
+  content: '';
+  display: block;
+  width: 0px;
+  height: 86%;
+  position: absolute;
+  top: 7%;
+  left: 0%;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 50px 30px #fff;
+  -webkit-transform: skewX(-20deg);
+  -moz-transform: skewX(-20deg);
+  -ms-transform: skewX(-20deg);
+  -o-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+}
+@keyframes sh02 {
+  from {
+    opacity: 0;
+    left: 0%;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    left: 100%;
+  }
+}
+button:active {
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: box-shadow 0.2s ease-in;
+  -moz-transition: box-shadow 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
+}
+.glass-radio-group {
+  --bg: rgba(255, 255, 255, 0.06);
+  --text: #e5e5e5;
+  display: flex;
+  position: relative;
+  background: var(--bg);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    inset 1px 1px 4px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 6px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  width: fit-content;
+}
+
+.glass-radio-group input {
+  display: none;
+}
+
+.glass-radio-group label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  font-size: 14px;
+  padding: 0.8rem 1.6rem;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease-in-out;
+}
+
+.glass-radio-group label:hover {
+  color: white;
+}
+
+.glass-radio-group input:checked + label {
+  color: #fff;
+}
+
+.glass-glider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(100% / 3);
+  border-radius: 1rem;
+  z-index: 1;
+  transition:
+    transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56),
+    background 0.4s ease-in-out,
+    box-shadow 0.4s ease-in-out;
+}
+
+#glass-default:checked ~ .glass-glider {
+  transform: translateX(0%);
+  background: linear-gradient(135deg, #c0c0c055, #e0e0e0);
+  box-shadow:
+    0 0 18px rgba(192, 192, 192, 0.5),
+    0 0 10px rgba(255, 255, 255, 0.4) inset;
+}
+#glass-stories:checked ~ .glass-glider {
+  transform: translateX(100%);
+  background: linear-gradient(135deg, #ffd70055, #ffcc00);
+  box-shadow:
+    0 0 18px rgba(255, 215, 0, 0.5),
+    0 0 10px rgba(255, 235, 150, 0.4) inset;
+}
+#glass-long:checked ~ .glass-glider {
+  transform: translateX(200%);
+  background: linear-gradient(135deg, #d0e7ff55, #a0d8ff);
+  box-shadow:
+    0 0 18px rgba(160, 216, 255, 0.5),
+    0 0 10px rgba(200, 240, 255, 0.4) inset;
+}
+/* Glassy effect for all main content cards and backgrounds */
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    <img src="/static/img/6c9db457-74a4-49ab-882f-7ad9c977e954_Google_Vertex_AI.png" alt="Vertex AI" class="w-10 h-10 object-contain" />
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-xl font-semibold text-white" data-translate="ask_ai_assistant">Ask AI Agentic-Assistant</h1>
+                    <p class="text-gray-300">Create unified content with AI responses, worksheets, mind maps and YouTube video Recommendations</p>
+                    <p class="text-blue-300 text-xs mt-1">You can ask with voice and listen to responses in your chosen language.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unified AI Form -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                <h2 class="text-lg font-semibold text-white flex items-center" data-translate="unified_ai_request">
+                <svg class="inline w-6 h-6 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2v2m6.364 1.636l-1.414 1.414M22 12h-2M19.364 19.364l-1.414-1.414M12 22v-2M4.636 19.364l1.414-1.414M2 12h2M4.636 4.636l1.414 1.414" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke-width="2"/></svg>
+                Unified AI Request
+            </h2>
+                <div class="glass-radio-group ml-auto" style="margin-right:0;">
+                    <input type="radio" name="ai_mode" id="glass-default" value="default" checked />
+                    <label for="glass-default">Default</label>
+                    <input type="radio" name="ai_mode" id="glass-stories" value="stories" />
+                    <label for="glass-stories">Stories</label>
+                    <input type="radio" name="ai_mode" id="glass-long" value="long_summaries" />
+                    <label for="glass-long">Long Summaries</label>
+                    <div class="glass-glider"></div>
+                </div>
+            </div>
+            <form id="unifiedAIForm" class="space-y-4">
+                <div>
+                    <label for="unifiedQuery" class="block text-sm font-medium text-gray-300 mb-2" data-translate="your_teaching_request">Your Teaching Request:</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <textarea name="unifiedQuery" id="unifiedQuery" rows="4" 
+                                  class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white placeholder-gray-400" 
+                                  placeholder="e.g., Create a worksheet and explain the water cycle for grade 4 in simple Telugu. Also give 2–3 related YouTube videos for explanation."></textarea>
+                        <button type="button" id="unified-voice-btn" title="Speak your request" style="padding: 10px; border-radius: 50%; background: #3d6aff; color: #fff; border: none; display: flex; align-items: center; justify-content: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v2m0 0a4 4 0 01-4-4h8a4 4 0 01-4 4zm0-4V6a4 4 0 118 0v8a4 4 0 01-8 0z" /></svg>
+                        </button>
+                        <span class="text-blue-400 text-xs font-semibold ml-1">Speak your request</span>
+                    </div>
+                    <div id="unified-voice-status" style="color:#3d6aff; font-size:0.95em; margin-top:0.3em;"></div>
+                </div>
+                <div>
+                    <label for="schoolLevel" class="block text-sm font-medium text-gray-300 mb-2" data-translate="school_level">School Level:</label>
+                    <select name="schoolLevel" id="schoolLevel" 
+                            class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                        <option value="primary">Primary</option>
+                        <option value="middle">Middle</option>
+                        <option value="high school">High School</option>
+                        <option value="ug">UG</option>
+                        <option value="college">College</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="grade" class="block text-sm font-medium text-gray-300 mb-2" data-translate="grade">Grade:</label>
+                    <select name="grade" id="grade" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                        <!-- Grade options will be dynamically populated -->
+                    </select>
+                </div>
+                <div>
+                    <label for="language" class="block text-sm font-medium text-gray-300 mb-2" data-translate="language">Language:</label>
+                    <select name="language" id="language" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                        <option value="english">English</option>
+                        <option value="telugu">Telugu</option>
+                        <option value="kannada">Kannada</option>
+                        <option value="hindi">Hindi</option>
+                    </select>
+                </div>
+                <button type="submit" data-translate="generate_unified_content">Generate Unified Content</button>
+            </form>
+        </div>
+
+        <!-- Unified Results -->
+        <div id="unifiedResults" class="hidden space-y-6">
+            <!-- Loading State -->
+            <div id="loadingState" class="hidden bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <div class="flex items-center space-x-3">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-linkedin"></div>
+                    <p class="text-gray-300" data-translate="generating_ai_content">Generating AI content...</p>
+                </div>
+            </div>
+
+            <!-- AI Response -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <h3 class="text-lg font-semibold text-white mb-4" data-translate="ai_response">
+                    <span class="inline-block align-middle w-8 h-8 bg-white rounded-xl shadow-lg overflow-hidden mr-2">
+                        <img src="/static/img/6c9db457-74a4-49ab-882f-7ad9c977e954_Google_Vertex_AI.png" alt="Vertex AI" class="w-8 h-8 object-contain" />
+                    </span>
+                    AI Response
+                </h3>
+                <div id="aiResponse" class="text-gray-200 bg-dark-700 p-4 rounded-lg border-l-4 border-linkedin leading-relaxed"></div>
+                <div class="mt-3 flex items-center gap-2">
+                    <button id="tts-btn" type="button" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" data-translate="listen">🔊 Listen</button>
+                    <audio id="tts-audio" controls style="display:none;"></audio>
+                    <span class="text-blue-400 text-xs font-semibold ml-2">Listen to response</span>
+                </div>
+            </div>
+
+            <!-- Generated Worksheet -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <h3 class="text-lg font-semibold text-white mb-4" data-translate="generated_worksheet">
+                    <svg class="inline w-6 h-6 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 8h6"/></svg>
+                    Generated Worksheet
+                </h3>
+                <div id="worksheetPreview" class="mb-4">
+                    <!-- PDF Preview will be embedded here -->
+                    <div id="pdfPreviewContainer" class="hidden">
+                        <div class="border border-dark-600 rounded-lg overflow-hidden bg-dark-700">
+                            <div class="bg-dark-800 px-4 py-2 border-b border-dark-600 flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-200" data-translate="worksheet_preview">📄 Worksheet Preview</span>
+                                <button onclick="downloadWorksheetPDF()" data-translate="download_pdf">
+                                    Download PDF
+                                </button>
+                            </div>
+                            <div id="pdfPreviewFrame" class="w-full h-96">
+                                <!-- PDF iframe will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Preview (fallback) -->
+                    <div id="textPreviewContainer" class="text-gray-200 bg-dark-700 p-4 rounded-lg border-l-4 border-green-500 leading-relaxed max-h-96 overflow-y-auto">
+                        <!-- Text content will be shown here if PDF preview fails -->
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="previewWorksheetPDF()" data-translate="preview_pdf">
+                        Preview PDF
+                    </button>
+                    <button onclick="downloadWorksheetPDF()" data-translate="download_pdf">
+                        Download PDF
+                    </button>
+                    <button onclick="saveToFeed()" data-translate="share_to_feed">
+                        Share to Feed
+                    </button>
+                </div>
+            </div>
+
+            <!-- YouTube Videos -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center" data-translate="related_videos">
+                  <img src="/static/img/Youtube_logo.png" alt="YouTube Logo" class="w-7 h-7 mr-2 inline-block align-middle" />
+                  YouTube Video Recommendations
+                </h3>
+                <div id="youtubeVideos" class="bg-dark-700 p-4 rounded-lg border-l-4 border-red-500">
+                    <div id="videoList">
+                        {% if yt_videos is defined and yt_videos %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {% for video in yt_videos %}
+                                <div class="bg-dark-800 rounded-lg border border-dark-600 p-3 flex flex-col items-center">
+                                    <a href="{{ video.url }}" target="_blank" class="block w-full mb-2">
+                                        <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg w-full h-40 object-cover mb-2">
+                                    </a>
+                                    <a href="{{ video.url }}" target="_blank" class="text-white font-semibold hover:text-linkedin text-center">{{ video.title }}</a>
+                                    <div class="text-xs text-gray-400 mt-1 text-center">{{ video.channel }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-gray-400 text-center" data-translate="no_video_recommendations">No video recommendations available for this topic.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mind Map Section (Unified AI) -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <h3 class="text-lg font-semibold text-white mb-4" data-translate="mind_map">
+                    <svg class="inline w-6 h-6 text-purple-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    Mind Map
+                </h3>
+                <div id="mindMapContainer" class="bg-dark-700 p-4 rounded-lg border-l-4 border-purple-500">
+                    <div id="mindMapRender"></div>
+                    <div id="unifiedMindMapActions" class="flex gap-3 mt-3" style="display:none;">
+                        <button type="button" onclick="openMindMapModal('unified')" data-translate="full_screen">Full Screen</button>
+                        <button type="button" onclick="downloadMindMapAsPNG('unified')" data-translate="download_as_png">Download as PNG</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Traditional Tools -->
+        <div class="grid lg:grid-cols-2 gap-6 mt-8">
+            <!-- Gemini AI Assistant -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8a4 4 0 018 0v8a4 4 0 01-8 0V8z"/></svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-white" data-translate="simple_ai_assistant">Simple AI Assistant</h2>
+                </div>
+                
+                <form method="POST" class="space-y-4">
+                    <div>
+                        <label for="query" class="block text-sm font-medium text-gray-300 mb-2" data-translate="ask_anything">Ask anything for your class:</label>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <textarea name="query" id="query" rows="4" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="e.g., Create a lesson plan for teaching fractions to 3rd graders..."></textarea>
+                            <button type="button" id="voice-btn" title="Speak your question" style="padding: 10px; border-radius: 50%; background: #3d6aff; color: #fff; border: none; display: flex; align-items: center; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v2m0 0a4 4 0 01-4-4h8a4 4 0 01-4 4zm0-4V6a4 4 0 118 0v8a4 4 0 01-8 0z" /></svg>
+                            </button>
+                            <span class="text-blue-400 text-xs font-semibold ml-1">Ask with voice</span>
+                        </div>
+                        <div id="voice-status" style="color:#3d6aff; font-size:0.95em; margin-top:0.3em;"></div>
+                    </div>
+                    <button type="submit" data-translate="ask_ai_assistant_btn">
+                        Ask AI Assistant
+                    </button>
+                </form>
+                
+                {% if gemini_response %}
+                <div class="mt-6 p-4 bg-dark-700 rounded-lg border border-blue-200">
+                    <h3 class="font-semibold text-blue-200 mb-2">AI Response:</h3>
+                    <div class="text-gray-100 leading-relaxed">{{ gemini_response }}</div>
+                    <button onclick="saveResponse('{{ gemini_response|replace('\n', '\n')|replace("'", "\\'") }}')" class="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
+                        Save to Dashboard
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Worksheet Generator -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11a3 3 0 11-6 0 3 3 0 016 0zm3 0a3 3 0 11-6 0 3 3 0 016 0zm2 5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-white" data-translate="image_to_worksheet">Image to Worksheet</h2>
+                </div>
+                
+                <form id="worksheetForm" enctype="multipart/form-data" class="space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="image" class="block text-sm font-medium text-gray-300 mb-2" data-translate="upload_textbook_image">Upload Textbook Image:</label>
+                            <input type="file" name="image" id="image" accept="image/*" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-dark-700 text-white" required>
+                        </div>
+                        <div>
+                            <label for="schoolLevel" class="block text-sm font-medium text-gray-300 mb-2" data-translate="school_level">School Level:</label>
+                            <select name="schoolLevel" id="schoolLevel" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-dark-700 text-white">
+                                <option value="primary">Primary</option>
+                                <option value="middle">Middle</option>
+                                <option value="high school">High School</option>
+                                <option value="ug">UG</option>
+                                <option value="college">College</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="grade" class="block text-sm font-medium text-gray-300 mb-2" data-translate="grade">Grade:</label>
+                        <select name="grade" id="grade" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-dark-700 text-white">
+                            <!-- Grade options will be dynamically populated -->
+                        </select>
+                    </div>
+                    <button type="submit" data-translate="generate_worksheet_btn">
+                        Generate Worksheet
+                    </button>
+                </form>
+                
+                <div id="worksheetResult" class="mt-6 hidden">
+                    <div class="p-6 bg-gradient-to-r from-green-900/80 to-emerald-900/80 rounded-lg border border-green-700">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white text-2xl">✅</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-green-200 mb-2" data-translate="worksheet_generated_successfully">Worksheet Generated Successfully!</h3>
+                            <p class="text-green-400" data-translate="your_ai_generated_worksheet">Your AI-generated worksheet is ready for preview and download.</p>
+                        </div>
+                        
+                        <!-- PDF Preview for Traditional Form -->
+                        <div id="traditionalWorksheetPreview" class="mb-4">
+                            <!-- PDF Preview will be embedded here -->
+                            <div id="traditionalPdfPreviewContainer" class="hidden">
+                                <div class="border border-dark-600 rounded-lg overflow-hidden bg-dark-700">
+                                    <div class="bg-dark-800 px-4 py-2 border-b border-dark-600 flex items-center justify-between">
+                                        <span class="text-sm font-medium text-gray-200" data-translate="worksheet_preview">📄 Worksheet Preview</span>
+                                        <button onclick="downloadWorksheetPDF()" data-translate="download_pdf">
+                                            Download PDF
+                                        </button>
+                                    </div>
+                                    <div id="traditionalPdfPreviewFrame" class="w-full h-96">
+                                        <!-- PDF iframe will be inserted here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Text Preview (fallback) -->
+                            <div id="traditionalTextPreviewContainer" class="text-gray-200 bg-dark-700 p-4 rounded-lg border border-dark-600 leading-relaxed max-h-96 overflow-y-auto">
+                                <!-- Text content will be shown here if PDF preview fails -->
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                            <button onclick="previewWorksheetPDF()" data-translate="preview_pdf">
+                                Preview PDF
+                            </button>
+                            <button onclick="saveWorksheet()" data-translate="save_to_dashboard">
+                                Save to Dashboard
+                            </button>
+                            <button onclick="downloadWorksheetPDF()" data-translate="download_pdf">
+                                Download PDF
+                            </button>
+                        </div>
+                        
+                        <p class="text-sm text-green-400 mt-4" data-translate="preview_pdf_to_see">
+                            Preview the PDF to see the formatted worksheet before downloading.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mind Map Generator -->
+            <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19v-8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3h3a3 3 0 003-3zm0 0V9a3 3 0 013-3h3a3 3 0 013 3v6a3 3 0 01-3 3H9a3 3 0 01-3-3z"/></svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-white" data-translate="generate_mind_map">Generate Mind Map</h2>
+                </div>
+                <form id="mindMapForm" class="space-y-4">
+                    <div>
+                        <label for="mindMapPrompt" class="block text-sm font-medium text-gray-300 mb-2" data-translate="enter_summary_topic">Enter summary or topic:</label>
+                        <textarea id="mindMapPrompt" rows="3" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="e.g., Explain the water cycle for grade 4"></textarea>
+                    </div>
+                    <button type="submit" data-translate="generate_mind_map_btn">Generate Mind Map</button>
+                </form>
+                <div id="simpleMindMapContainer" class="mt-6 bg-dark-700 p-4 rounded-lg border-l-4 border-purple-500">
+                    <div id="simpleMindMapRender"></div>
+                    <div id="simpleMindMapActions" class="flex gap-3 mt-3" style="display:none;">
+                        <button type="button" onclick="openMindMapModal('simple')" data-translate="full_screen">Full Screen</button>
+                        <button type="button" onclick="downloadMindMapAsPNG('simple')" data-translate="download_as_png">Download as PNG</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PDF Preview Modal -->
+<div id="pdfModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-dark-800 rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] flex flex-col border border-dark-700">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-dark-700">
+                <h3 class="text-lg font-semibold text-white">Worksheet Preview</h3>
+                <button onclick="closePDFModal()" class="text-gray-400 hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="flex-1 p-6 overflow-hidden">
+                <div id="pdfViewer" class="w-full h-full border border-dark-600 rounded-lg overflow-hidden">
+                    <!-- PDF will be embedded here -->
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-between p-6 border-t border-dark-700">
+                <div class="text-sm text-gray-400">
+                    <span id="pdfFilename">sahayak_worksheet.pdf</span>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="saveWorksheet()">
+                        Save to Dashboard
+                    </button>
+                    <button onclick="downloadWorksheetPDF()">
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mind Map Full Screen Modal -->
+<div id="mindMapModal" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center">
+    <div class="bg-dark-800 rounded-lg shadow-xl w-[95vw] h-[90vh] flex flex-col border border-dark-700 relative">
+        <button onclick="closeMindMapModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 z-10">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="flex-1 p-2 overflow-auto flex items-center justify-center" style="min-width:0;min-height:0;">
+            <div id="mindMapModalContent" style="min-width:0;min-height:0;overflow:auto;max-width:none;max-height:none;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Mermaid.js and canvg -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvg@4.0.1/lib/umd.min.js"></script>
+<script>
+mermaid.initialize({ startOnLoad: false });
+let currentWorksheet = null;
+let currentUnifiedData = null;
+
+// Unified AI Form Handler
+document.getElementById('unifiedAIForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const query = document.getElementById('unifiedQuery').value;
+    const schoolLevel = document.getElementById('schoolLevel').value;
+    const grade = document.getElementById('grade').value;
+    const aiMode = document.querySelector('input[name="ai_mode"]:checked').value;
+    const language = document.getElementById('language').value;
+    
+    if (!query.trim()) {
+        alert('Please enter a teaching request');
+        return;
+    }
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    submitBtn.textContent = 'Generating...';
+    submitBtn.disabled = true;
+    
+    // Show loading state
+    document.getElementById('unifiedResults').classList.remove('hidden');
+    document.getElementById('loadingState').classList.remove('hidden');
+    
+    try {
+        const response = await fetch('/unified_ai', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: query, schoolLevel: schoolLevel, grade: grade, ai_mode: aiMode, language: language })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ai_response) {
+            currentUnifiedData = data;
+            currentWorksheet = data.worksheet;
+            
+            // Hide loading state
+            document.getElementById('loadingState').classList.add('hidden');
+            
+            // Display results with proper formatting
+            const aiResponseElement = document.getElementById('aiResponse');
+            const worksheetElement = document.getElementById('generatedWorksheet');
+            const videoElement = document.getElementById('videoLink');
+            
+            // Format AI response with line breaks and proper formatting
+            const formattedAIResponse = data.ai_response
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic text
+                .replace(/\n/g, '<br>'); // Line breaks
+            
+            aiResponseElement.innerHTML = formattedAIResponse;
+            
+            // Automatically generate and display PDF preview
+            await generatePDFPreview(data.worksheet, grade, language);
+            
+            // Set video list for unified AI
+            const videoListDiv = document.getElementById('videoList');
+            if (data.videos && Array.isArray(data.videos) && data.videos.length > 0) {
+                videoListDiv.innerHTML = `<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>` +
+                    data.videos.map(video => `
+                        <div class='bg-dark-800 rounded-lg border border-dark-600 p-3 flex flex-col items-center'>
+                            <a href='${video.url}' target='_blank' class='block w-full mb-2'>
+                                <img src='${video.thumbnail}' alt='${video.title}' class='rounded-lg w-full h-40 object-cover mb-2'>
+                            </a>
+                            <a href='${video.url}' target='_blank' class='text-white font-semibold hover:text-linkedin text-center'>${video.title}</a>
+                            <div class='text-xs text-gray-400 mt-1 text-center'>${video.channel || ''}</div>
+                        </div>
+                    `).join('') + `</div>`;
+            } else {
+                videoListDiv.innerHTML = `<div class='text-gray-400 text-center' data-translate="no_video_recommendations">No video recommendations available for this topic.</div>`;
+            }
+            
+            // Unified AI: Render mind map after getting response
+            if (data.mindmap_code) {
+                await renderUnifiedMindMap(data.mindmap_code);
+            }
+            
+            // Scroll to results
+            document.getElementById('unifiedResults').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            // Hide loading state on error
+            document.getElementById('loadingState').classList.add('hidden');
+            alert('Error generating content: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        // Hide loading state on error
+        document.getElementById('loadingState').classList.add('hidden');
+        alert('Error: ' + error.message);
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Traditional worksheet form
+document.getElementById('worksheetForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    submitBtn.textContent = 'Generating...';
+    submitBtn.disabled = true;
+    
+    // Show loading state
+    document.getElementById('unifiedResults').classList.remove('hidden');
+    document.getElementById('loadingState').classList.remove('hidden');
+    
+    try {
+        const response = await fetch('/upload_image', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.worksheet) {
+            currentWorksheet = data.worksheet;
+            
+            // Generate PDF preview for traditional worksheet form
+            await generatePDFPreview(data.worksheet, document.getElementById('grade').value, document.getElementById('language').value);
+            
+            document.getElementById('worksheetResult').classList.remove('hidden');
+            
+            // Scroll to result
+            document.getElementById('worksheetResult').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('Error generating worksheet: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        document.getElementById('loadingState').classList.add('hidden');
+    }
+});
+
+function saveResponse(response) {
+    fetch('/save_response', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ response: response })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Response saved to dashboard!');
+        }
+    })
+    .catch(error => {
+        alert('Error saving response: ' + error.message);
+    });
+}
+
+function saveWorksheet() {
+    if (currentWorksheet) {
+        const grade = document.getElementById('grade').value;
+        const language = document.getElementById('language') ? document.getElementById('language').value : 'english';
+        fetch('/save_response', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                response: currentWorksheet,
+                type: 'worksheet',
+                grade: grade,
+                language: language
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Worksheet saved to dashboard!');
+            }
+        })
+        .catch(error => {
+            alert('Error saving worksheet: ' + error.message);
+        });
+    }
+}
+
+function saveToFeed() {
+    if (currentUnifiedData) {
+        alert('Content has been automatically shared to the Teaching Feed!');
+        window.location.href = "{{ url_for('feed') }}";
+    }
+}
+
+function downloadWorksheetPDF() {
+    if (currentWorksheet) {
+        // Create a temporary form to submit the worksheet for PDF generation
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/download_worksheet_pdf';
+        
+        const worksheetInput = document.createElement('input');
+        worksheetInput.type = 'hidden';
+        worksheetInput.name = 'worksheet';
+        worksheetInput.value = currentWorksheet;
+        
+        const gradeInput = document.createElement('input');
+        gradeInput.type = 'hidden';
+        gradeInput.name = 'grade';
+        gradeInput.value = document.getElementById('grade').value;
+        
+        // Add language parameter
+        const languageInput = document.createElement('input');
+        languageInput.type = 'hidden';
+        languageInput.name = 'language';
+        languageInput.value = document.getElementById('language') ? document.getElementById('language').value : 'english';
+        
+        form.appendChild(worksheetInput);
+        form.appendChild(gradeInput);
+        form.appendChild(languageInput);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+}
+
+async function previewWorksheetPDF() {
+    if (currentWorksheet) {
+        const grade = document.getElementById('grade').value;
+        const language = document.getElementById('language') ? document.getElementById('language').value : 'english';
+        
+        // If PDF preview is already shown inline, just show the modal for full-screen view
+        const isUnifiedForm = document.getElementById('unifiedResults').classList.contains('hidden') === false;
+        const pdfPreviewShown = isUnifiedForm ? 
+            !document.getElementById('pdfPreviewContainer').classList.contains('hidden') :
+            !document.getElementById('traditionalPdfPreviewContainer').classList.contains('hidden');
+        
+        if (pdfPreviewShown) {
+            // PDF is already shown inline, just open modal for full-screen view
+            const formData = new FormData();
+            formData.append('worksheet', currentWorksheet);
+            formData.append('grade', grade);
+            formData.append('language', language);
+            
+            try {
+                const response = await fetch('/preview_worksheet_pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.pdf_data) {
+                    // Update filename
+                    document.getElementById('pdfFilename').textContent = data.filename;
+                    
+                    // Create PDF viewer in modal
+                    const pdfViewer = document.getElementById('pdfViewer');
+                    pdfViewer.innerHTML = `
+                        <iframe 
+                            src="data:application/pdf;base64,${data.pdf_data}#toolbar=1&navpanes=1&scrollbar=1" 
+                            width="100%" 
+                            height="600px" 
+                            style="border: none;"
+                            title="Worksheet PDF Preview">
+                        </iframe>
+                    `;
+                    
+                    // Show modal
+                    document.getElementById('pdfModal').classList.remove('hidden');
+                } else {
+                    alert('Error generating PDF preview: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        } else {
+            // Generate PDF preview inline first
+            await generatePDFPreview(currentWorksheet, grade, language);
+        }
+    }
+}
+
+function closePDFModal() {
+    document.getElementById('pdfModal').classList.add('hidden');
+}
+
+async function generatePDFPreview(worksheet, grade, language = 'english') {
+    if (!worksheet) return;
+    
+    try {
+        const formData = new FormData();
+        formData.append('worksheet', worksheet);
+        formData.append('grade', grade);
+        formData.append('language', language);
+        
+        const response = await fetch('/preview_worksheet_pdf', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.pdf_data) {
+            // Determine which form was used and update accordingly
+            const isUnifiedForm = document.getElementById('unifiedResults').classList.contains('hidden') === false;
+            
+            if (isUnifiedForm) {
+                // Unified form - update unified preview
+                document.getElementById('pdfPreviewContainer').classList.remove('hidden');
+                document.getElementById('textPreviewContainer').classList.add('hidden');
+                
+                const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
+                pdfPreviewFrame.innerHTML = `
+                    <iframe 
+                        src="data:application/pdf;base64,${data.pdf_data}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
+                        width="100%" 
+                        height="100%" 
+                        style="border: none; min-height: 400px;"
+                        title="Worksheet PDF Preview">
+                    </iframe>
+                `;
+            } else {
+                // Traditional form - update traditional preview
+                document.getElementById('traditionalPdfPreviewContainer').classList.remove('hidden');
+                document.getElementById('traditionalTextPreviewContainer').classList.add('hidden');
+                
+                const traditionalPdfPreviewFrame = document.getElementById('traditionalPdfPreviewFrame');
+                traditionalPdfPreviewFrame.innerHTML = `
+                    <iframe 
+                        src="data:application/pdf;base64,${data.pdf_data}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
+                        width="100%" 
+                        height="100%" 
+                        style="border: none; min-height: 400px;"
+                        title="Worksheet PDF Preview">
+                    </iframe>
+                `;
+            }
+        } else {
+            // Fallback to text preview
+            const isUnifiedForm = document.getElementById('unifiedResults').classList.contains('hidden') === false;
+            
+            if (isUnifiedForm) {
+                document.getElementById('pdfPreviewContainer').classList.add('hidden');
+                document.getElementById('textPreviewContainer').classList.remove('hidden');
+                document.getElementById('textPreviewContainer').innerHTML = worksheet
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>');
+            } else {
+                document.getElementById('traditionalPdfPreviewContainer').classList.add('hidden');
+                document.getElementById('traditionalTextPreviewContainer').classList.remove('hidden');
+                document.getElementById('traditionalTextPreviewContainer').innerHTML = worksheet
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>');
+            }
+        }
+    } catch (error) {
+        console.error('Error generating PDF preview:', error);
+        // Fallback to text preview
+        const isUnifiedForm = document.getElementById('unifiedResults').classList.contains('hidden') === false;
+        
+        if (isUnifiedForm) {
+            document.getElementById('pdfPreviewContainer').classList.add('hidden');
+            document.getElementById('textPreviewContainer').classList.remove('hidden');
+            document.getElementById('textPreviewContainer').innerHTML = worksheet
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        } else {
+            document.getElementById('traditionalPdfPreviewContainer').classList.add('hidden');
+            document.getElementById('traditionalTextPreviewContainer').classList.remove('hidden');
+            document.getElementById('traditionalTextPreviewContainer').innerHTML = worksheet
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+    }
+}
+
+// Unified AI: Render mind map after getting response
+async function renderUnifiedMindMap(mindmap_code) {
+    const mindMapRender = document.getElementById('mindMapRender');
+    const actions = document.getElementById('unifiedMindMapActions');
+    if (!mindmap_code) {
+        mindMapRender.innerHTML = '<div class="text-gray-400" data-translate="no_mind_map_available">No mind map available for this topic.</div>';
+        actions.style.display = 'none';
+        return;
+    }
+    try {
+        const { svg } = await mermaid.render('unified-mindmap', mindmap_code);
+        mindMapRender.innerHTML = svg;
+        actions.style.display = '';
+    } catch (err) {
+        mindMapRender.innerHTML = '<div class="text-red-400" data-translate="error_rendering_mind_map">Error rendering mind map.</div>';
+        actions.style.display = 'none';
+        console.error('Mermaid render error:', err);
+    }
+}
+
+// Add event listener to update grade options based on school level
+document.getElementById('schoolLevel').addEventListener('change', function() {
+    const gradeSelect = document.getElementById('grade');
+    gradeSelect.innerHTML = '';
+    
+    const schoolLevel = this.value;
+    const grades = {
+        primary: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'],
+        middle: ['6th', '7th', '8th', '9th', '10th'],
+        highSchool: ['9th', '10th', '11th', '12th'],
+        ug: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'],
+        college: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th']
+    };
+    
+    grades[schoolLevel].forEach(g => {
+        const option = document.createElement('option');
+        option.value = g;
+        option.textContent = g;
+        gradeSelect.appendChild(option);
+    });
+});
+
+// Voice to text logic for Simple AI Assistant
+let mediaRecorder, audioChunks = [];
+const voiceBtn = document.getElementById('voice-btn');
+const voiceStatus = document.getElementById('voice-status');
+let recording = false;
+let stream = null;
+
+voiceBtn.addEventListener('click', async function() {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+        voiceStatus.textContent = 'Voice recording not supported in this browser.';
+        return;
+    }
+    if (!recording) {
+        // Start recording
+        voiceStatus.textContent = 'Recording... Click again to stop.';
+        voiceBtn.disabled = false;
+        audioChunks = [];
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = async () => {
+                voiceStatus.textContent = 'Transcribing...';
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
+                try {
+                    const res = await fetch('/speech-to-text', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.text) {
+                        document.getElementById('query').value = data.text;
+                        voiceStatus.textContent = 'Transcription complete!';
+                    } else {
+                        voiceStatus.textContent = 'Could not transcribe audio.';
+                        console.error('Speech-to-text error:', data.error || data);
+                    }
+                } catch (err) {
+                    voiceStatus.textContent = 'Error: ' + err.message;
+                    console.error('Speech-to-text fetch error:', err);
+                }
+                setTimeout(() => { voiceStatus.textContent = ''; }, 2000);
+                voiceBtn.disabled = false;
+                recording = false;
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+            };
+            mediaRecorder.start();
+            recording = true;
+            voiceBtn.textContent = '⏹️'; // Show stop icon
+        } catch (err) {
+            voiceStatus.textContent = 'Microphone access denied.';
+            voiceBtn.disabled = false;
+            recording = false;
+            console.error('Microphone access denied:', err);
+        }
+    } else {
+        // Stop recording
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            voiceStatus.textContent = 'Processing...';
+            voiceBtn.textContent = '';
+            // Restore icon after processing
+            setTimeout(() => {
+                voiceBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v2m0 0a4 4 0 01-4-4h8a4 4 0 01-4 4zm0-4V6a4 4 0 118 0v8a4 4 0 01-8 0z" /></svg>`;
+            }, 2000);
+        }
+        recording = false;
+    }
+});
+
+// Voice to text logic for Unified AI Request
+let unifiedMediaRecorder, unifiedAudioChunks = [];
+const unifiedVoiceBtn = document.getElementById('unified-voice-btn');
+const unifiedVoiceStatus = document.getElementById('unified-voice-status');
+let unifiedRecording = false;
+let unifiedStream = null;
+
+unifiedVoiceBtn.addEventListener('click', async function() {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+        unifiedVoiceStatus.textContent = 'Voice recording not supported in this browser.';
+        return;
+    }
+    if (!unifiedRecording) {
+        // Start recording
+        unifiedVoiceStatus.textContent = 'Recording... Click again to stop.';
+        unifiedVoiceBtn.disabled = false;
+        unifiedAudioChunks = [];
+        try {
+            unifiedStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            unifiedMediaRecorder = new MediaRecorder(unifiedStream);
+            unifiedMediaRecorder.ondataavailable = e => unifiedAudioChunks.push(e.data);
+            unifiedMediaRecorder.onstop = async () => {
+                unifiedVoiceStatus.textContent = 'Transcribing...';
+                const audioBlob = new Blob(unifiedAudioChunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
+                try {
+                    const res = await fetch('/speech-to-text', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.text) {
+                        document.getElementById('unifiedQuery').value = data.text;
+                        unifiedVoiceStatus.textContent = 'Transcription complete!';
+                    } else {
+                        unifiedVoiceStatus.textContent = 'Could not transcribe audio.';
+                        console.error('Speech-to-text error:', data.error || data);
+                    }
+                } catch (err) {
+                    unifiedVoiceStatus.textContent = 'Error: ' + err.message;
+                    console.error('Speech-to-text fetch error:', err);
+                }
+                setTimeout(() => { unifiedVoiceStatus.textContent = ''; }, 2000);
+                unifiedVoiceBtn.disabled = false;
+                unifiedRecording = false;
+                if (unifiedStream) {
+                    unifiedStream.getTracks().forEach(track => track.stop());
+                    unifiedStream = null;
+                }
+            };
+            unifiedMediaRecorder.start();
+            unifiedRecording = true;
+            unifiedVoiceBtn.textContent = '⏹️'; // Show stop icon
+        } catch (err) {
+            unifiedVoiceStatus.textContent = 'Microphone access denied.';
+            unifiedVoiceBtn.disabled = false;
+            unifiedRecording = false;
+            console.error('Microphone access denied:', err);
+        }
+    } else {
+        // Stop recording
+        if (unifiedMediaRecorder && unifiedMediaRecorder.state === 'recording') {
+            unifiedMediaRecorder.stop();
+            unifiedVoiceStatus.textContent = 'Processing...';
+            unifiedVoiceBtn.textContent = '';
+            // Restore icon after processing
+            setTimeout(() => {
+                unifiedVoiceBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v2m0 0a4 4 0 01-4-4h8a4 4 0 01-4 4zm0-4V6a4 4 0 118 0v8a4 4 0 01-8 0z" /></svg>`;
+            }, 2000);
+        }
+        unifiedRecording = false;
+    }
+});
+
+// Mind Map Generator (Simple AI)
+document.getElementById('mindMapForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const prompt = document.getElementById('mindMapPrompt').value;
+    const actions = document.getElementById('simpleMindMapActions');
+    if (!prompt.trim()) {
+        alert('Please enter a summary or topic');
+        return;
+    }
+    const btn = this.querySelector('button[type="submit"]');
+    const originalText = btn.textContent;
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+    const simpleMindMapRender = document.getElementById('simpleMindMapRender');
+    simpleMindMapRender.innerHTML = '<div class="text-gray-400">Generating mind map...</div>';
+    actions.style.display = 'none';
+    try {
+        const res = await fetch('/generate_mindmap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        if (data.mindmap_code) {
+            const { svg } = await mermaid.render('simple-mindmap', data.mindmap_code);
+            simpleMindMapRender.innerHTML = svg;
+            actions.style.display = '';
+        } else {
+            simpleMindMapRender.innerHTML = '<div class="text-red-400" data-translate="error_generating_mind_map">Error: ' + (data.error || 'Unknown error') + '</div>';
+            actions.style.display = 'none';
+        }
+    } catch (err) {
+        simpleMindMapRender.innerHTML = '<div class="text-red-400" data-translate="error_generating_mind_map">Error: ' + err.message + '</div>';
+        actions.style.display = 'none';
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+});
+
+// Full Screen and Download as PNG logic
+function openMindMapModal(type) {
+    const modal = document.getElementById('mindMapModal');
+    const modalContent = document.getElementById('mindMapModalContent');
+    let svg = '';
+    if (type === 'unified') {
+        const el = document.getElementById('mindMapRender').querySelector('svg');
+        if (el) svg = el.outerHTML;
+    } else {
+        const el = document.getElementById('simpleMindMapRender').querySelector('svg');
+        if (el) svg = el.outerHTML;
+    }
+    if (svg) {
+        // Remove width/height attributes and set to 100%
+        svg = svg.replace(/width="[^"]*"/g, 'width="auto"');
+        svg = svg.replace(/height="[^"]*"/g, 'height="auto"');
+        modalContent.innerHTML = svg;
+        // Also set style for SVG
+        const svgEl = modalContent.querySelector('svg');
+        if (svgEl) {
+            svgEl.style.width = 'auto';
+            svgEl.style.height = 'auto';
+            svgEl.style.maxWidth = 'none';
+            svgEl.style.maxHeight = 'none';
+            svgEl.style.display = 'block';
+        }
+        modal.classList.remove('hidden');
+    }
+}
+function closeMindMapModal() {
+    document.getElementById('mindMapModal').classList.add('hidden');
+    document.getElementById('mindMapModalContent').innerHTML = '';
+}
+async function downloadMindMapAsPNG(type) {
+    let svgEl;
+    if (type === 'unified') {
+        svgEl = document.getElementById('mindMapRender').querySelector('svg');
+    } else {
+        svgEl = document.getElementById('simpleMindMapRender').querySelector('svg');
+    }
+    if (!svgEl) return;
+    const svgString = svgEl.outerHTML;
+    // Create a canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = svgEl.width.baseVal.value || 1200;
+    canvas.height = svgEl.height.baseVal.value || 800;
+    // Use canvg to render SVG to canvas
+    const ctx = canvas.getContext('2d');
+    const v = await window.canvg.Canvg.fromString(ctx, svgString);
+    await v.render();
+    // Download as PNG
+    const link = document.createElement('a');
+    link.download = 'mindmap.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+// TTS (Text-to-Speech) integration for AI Response
+const ttsBtn = document.getElementById('tts-btn');
+const ttsAudio = document.getElementById('tts-audio');
+if (ttsBtn && ttsAudio) {
+    ttsBtn.addEventListener('click', async function() {
+        const text = document.getElementById('aiResponse').innerText;
+        const language = document.getElementById('language') ? document.getElementById('language').value : 'english';
+        let language_code = 'en-US';
+        if (language === 'telugu') language_code = 'te-IN';
+        if (language === 'hindi') language_code = 'hi-IN';
+        if (language === 'kannada') language_code = 'kn-IN';
+        ttsBtn.textContent = '🔄 Generating...';
+        ttsBtn.disabled = true;
+        try {
+            const res = await fetch('/tts', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ text, language_code })
+            });
+            const data = await res.json();
+            if (data.audio) {
+                ttsAudio.src = 'data:audio/mp3;base64,' + data.audio;
+                ttsAudio.style.display = '';
+                ttsAudio.play();
+            } else {
+                alert('TTS failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (err) {
+            alert('TTS error: ' + err.message);
+        } finally {
+            ttsBtn.textContent = '🔊 Listen';
+            ttsBtn.disabled = false;
+        }
+    });
+}
+
+// Autofill unified AI input from ?prompt= query param
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const prompt = params.get('prompt');
+  if (prompt) {
+    const input = document.getElementById('unifiedQuery');
+    if (input) {
+      input.value = prompt;
+      input.focus();
+      input.scrollIntoView({behavior: 'smooth'});
+    }
+  }
+})();
+</script>
+{% endblock %}

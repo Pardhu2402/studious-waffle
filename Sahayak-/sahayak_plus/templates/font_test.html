@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-8">
+    <h1 class="text-3xl font-bold mb-6">Font Switching Test</h1>
+    
+    <div class="space-y-4">
+        <div class="p-4 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-2">English Text</h2>
+            <p class="text-lg">This is English text that should use Nunito font.</p>
+        </div>
+        
+        <div class="p-4 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-2">Hindi Text</h2>
+            <p class="text-lg">यह हिंदी टेक्स्ट है जो Noto Sans Devanagari फॉन्ट का उपयोग करना चाहिए।</p>
+        </div>
+        
+        <div class="p-4 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-2">Telugu Text</h2>
+            <p class="text-lg">ఇది తెలుగు టెక్స్ట్ ఇది Noto Sans Telugu ఫాంట్ ఉపయోగించాలి.</p>
+        </div>
+        
+        <div class="p-4 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-2">Kannada Text</h2>
+            <p class="text-lg">ಇದು ಕನ್ನಡ ಟೆಕ್ಸ್ಟ್ ಇದು Noto Sans Kannada ಫಾಂಟ್ ಬಳಸಬೇಕು.</p>
+        </div>
+    </div>
+    
+    <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+        <h3 class="text-lg font-semibold mb-2">Instructions:</h3>
+        <ol class="list-decimal list-inside space-y-1">
+            <li>Click the language selector in the top navigation</li>
+            <li>Select different languages (English, Hindi, Telugu, Kannada)</li>
+            <li>Observe how the text changes font</li>
+            <li>Check the browser console for debug information</li>
+        </ol>
+    </div>
+</div>
+{% endblock %} 

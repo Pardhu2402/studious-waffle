@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-xl font-semibold text-white">Social Media Trends</h1>
+                    <p class="text-gray-300">Discover trending teaching tips and community insights</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trends Display -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+            <h2 class="text-lg font-semibold text-white mb-4">Latest Teaching Trends</h2>
+            <div id="trendsContainer" class="space-y-4">
+                <div class="text-gray-300 text-center py-8">
+                    <svg class="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <p>Loading trending topics...</p>
+                </div>
+            </div>
+            <button id="refreshTrends" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                🔄 Refresh Trends
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadTrends() {
+    const container = document.getElementById('trendsContainer');
+    
+    try {
+        const response = await fetch('/social/trends');
+        const data = await response.json();
+        
+        if (data.success && data.trends.length > 0) {
+            container.innerHTML = data.trends.map(trend => `
+                <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-sm font-bold">${trend.source.charAt(0)}</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-white font-medium mb-1">${trend.title}</h3>
+                            <p class="text-gray-300 text-sm">${trend.summary}</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-xs text-purple-400 bg-purple-900/20 px-2 py-1 rounded">${trend.source}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = `
+                <div class="text-gray-300 text-center py-8">
+                    <p>No trending topics available at the moment.</p>
+                    <p class="text-sm text-gray-400 mt-2">Check back later for updates.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        container.innerHTML = `
+            <div class="text-red-300 text-center py-8">
+                <p>Error loading trends: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+document.getElementById('refreshTrends').addEventListener('click', loadTrends);
+
+// Load trends on page load
+document.addEventListener('DOMContentLoaded', loadTrends);
+</script>
+{% endblock %} 

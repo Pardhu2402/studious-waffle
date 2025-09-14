@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-8">
+    <h1 class="text-3xl font-bold mb-6">Font Switching Debug Page</h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Debug Panel -->
+        <div class="p-6 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Debug Information</h2>
+            <div id="debugInfo" class="space-y-2 text-sm">
+                <div>Loading debug information...</div>
+            </div>
+            <button onclick="testFonts()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Test Fonts
+            </button>
+            <button onclick="clearDebug()" class="mt-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                Clear Debug
+            </button>
+        </div>
+        
+        <!-- Font Test Panel -->
+        <div class="p-6 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Font Test</h2>
+            <div class="space-y-4">
+                <div class="p-3 border rounded">
+                    <h3 class="font-semibold">English Text</h3>
+                    <p class="text-lg">This is English text that should use Nunito font.</p>
+                </div>
+                
+                <div class="p-3 border rounded">
+                    <h3 class="font-semibold">Hindi Text</h3>
+                    <p class="text-lg">यह हिंदी टेक्स्ट है जो Noto Sans Devanagari फॉन्ट का उपयोग करना चाहिए।</p>
+                </div>
+                
+                <div class="p-3 border rounded">
+                    <h3 class="font-semibold">Telugu Text</h3>
+                    <p class="text-lg">ఇది తెలుగు టెక్స్ట్ ఇది Noto Sans Telugu ఫాంట్ ఉపయోగించాలి.</p>
+                </div>
+                
+                <div class="p-3 border rounded">
+                    <h3 class="font-semibold">Kannada Text</h3>
+                    <p class="text-lg">ಇದು ಕನ್ನಡ ಟೆಕ್ಸ್ಟ್ ಇದು Noto Sans Kannada ಫಾಂಟ್ ಬಳಸಬೇಕು.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="mt-8 p-6 bg-blue-50 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4">Instructions:</h3>
+        <ol class="list-decimal list-inside space-y-2">
+            <li>Click the language selector in the top navigation</li>
+            <li>Select different languages (English, Hindi, Telugu, Kannada)</li>
+            <li>Observe how the text changes font</li>
+            <li>Check the browser console for detailed debug information</li>
+            <li>Use the "Test Fonts" button to run font availability tests</li>
+            <li>Check the debug panel for real-time information</li>
+        </ol>
+    </div>
+</div>
+
+<script>
+// Comprehensive font debugging
+let debugLog = [];
+
+function log(message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+    debugLog.push(logEntry);
+    console.log(logEntry);
+    updateDebugDisplay();
+}
+
+function updateDebugDisplay() {
+    const debugInfo = document.getElementById('debugInfo');
+    debugInfo.innerHTML = debugLog.slice(-10).map(entry => 
+        `<div class="p-2 bg-gray-100 rounded text-xs font-mono">${entry}</div>`
+    ).join('');
+}
+
+function clearDebug() {
+    debugLog = [];
+    updateDebugDisplay();
+}
+
+function testFonts() {
+    log('Starting font availability test...', 'test');
+    
+    const fonts = [
+        { name: 'Noto Sans Devanagari', class: 'hindi-font', testText: 'हिंदी' },
+        { name: 'Noto Sans Telugu', class: 'telugu-font', testText: 'తెలుగు' },
+        { name: 'Noto Sans Kannada', class: 'kannada-font', testText: 'ಕನ್ನಡ' },
+        { name: 'Nunito', class: 'english-font', testText: 'English' }
+    ];
+    
+    fonts.forEach(font => {
+        // Test if font is available
+        if (document.fonts && document.fonts.check) {
+            const isAvailable = document.fonts.check(`12px ${font.name}`);
+            log(`Font ${font.name}: ${isAvailable ? '✅ Available' : '❌ Not available'}`, 'font');
+        } else {
+            log(`Font ${font.name}: ⚠️ Cannot check availability`, 'font');
+        }
+        
+        // Test font rendering
+        const testElement = document.createElement('div');
+        testElement.style.cssText = `
+            position: absolute;
+            left: -9999px;
+            font-family: ${font.name}, system-ui, sans-serif;
+            font-size: 16px;
+        `;
+        testElement.textContent = font.testText;
+        document.body.appendChild(testElement);
+        
+        const computedStyle = window.getComputedStyle(testElement);
+        const actualFont = computedStyle.fontFamily;
+        log(`Font test for ${font.name}:`, 'font');
+        log(`  Expected: ${font.name}`, 'font');
+        log(`  Actual: ${actualFont}`, 'font');
+        log(`  Match: ${actualFont.includes(font.name) ? '✅' : '❌'}`, 'font');
+        
+        document.body.removeChild(testElement);
+    });
+    
+    // Test current font classes
+    const body = document.body;
+    const html = document.documentElement;
+    log(`Current body classes: ${body.className}`, 'class');
+    log(`Current HTML classes: ${html.className}`, 'class');
+    
+    // Test computed styles
+    const testElement = document.createElement('div');
+    testElement.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        font-size: 16px;
+    `;
+    document.body.appendChild(testElement);
+    
+    const computedStyle = window.getComputedStyle(testElement);
+    log(`Current computed font-family: ${computedStyle.fontFamily}`, 'style');
+    
+    document.body.removeChild(testElement);
+}
+
+// Monitor language changes
+document.addEventListener('languageChanged', function(e) {
+    log(`Language changed: ${e.detail.language} -> ${e.detail.font}`, 'event');
+    
+    // Test font after change
+    setTimeout(() => {
+        const body = document.body;
+        const html = document.documentElement;
+        log(`After change - Body classes: ${body.className}`, 'class');
+        log(`After change - HTML classes: ${html.className}`, 'class');
+        
+        // Test computed font
+        const testElement = document.createElement('div');
+        testElement.style.cssText = `
+            position: absolute;
+            left: -9999px;
+            font-size: 16px;
+        `;
+        document.body.appendChild(testElement);
+        
+        const computedStyle = window.getComputedStyle(testElement);
+        log(`After change - Computed font: ${computedStyle.fontFamily}`, 'style');
+        
+        document.body.removeChild(testElement);
+    }, 100);
+});
+
+// Initial debug info
+document.addEventListener('DOMContentLoaded', function() {
+    log('Debug page loaded', 'info');
+    log('Monitoring font changes...', 'info');
+    
+    // Test initial state
+    setTimeout(() => {
+        testFonts();
+    }, 1000);
+});
+</script>
+{% endblock %} 

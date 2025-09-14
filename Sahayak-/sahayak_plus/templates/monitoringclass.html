@@ -1,0 +1,924 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-xl font-semibold text-white">Real-Time Classroom Monitoring</h1>
+                    <p class="text-gray-300">Monitor reading quality, classroom noise, student behavior, and engagement in real-time</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-Time Classroom Monitoring -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-white">Real-Time Classroom Monitoring</h2>
+                <div class="flex space-x-2">
+                    <button id="startMonitoring" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Start Monitoring</span>
+                    </button>
+                    <button id="stopMonitoring" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 hidden">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span>Stop Monitoring</span>
+                    </button>
+                </div>
+            </div>
+            <p class="text-gray-400 text-sm mb-4">Monitor reading quality, classroom noise, student behavior, and engagement in real-time</p>
+            
+            <!-- Monitoring Status -->
+            <div id="monitoringStatus" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Reading Quality -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-blue-400 font-medium text-sm">📖 Reading Quality</h3>
+                            <div id="readingQualityIndicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                        </div>
+                        <div id="readingQualityValue" class="text-2xl font-bold text-white">--</div>
+                        <div id="readingQualityDetails" class="text-xs text-gray-400">No data</div>
+                    </div>
+
+                    <!-- Classroom Noise -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-yellow-400 font-medium text-sm">🔊 Noise Level</h3>
+                            <div id="noiseLevelIndicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                        </div>
+                        <div id="noiseLevelValue" class="text-2xl font-bold text-white">--</div>
+                        <div id="noiseLevelDetails" class="text-xs text-gray-400">No data</div>
+                    </div>
+
+                    <!-- Student Engagement -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-green-400 font-medium text-sm">👥 Engagement</h3>
+                            <div id="engagementIndicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                        </div>
+                        <div id="engagementValue" class="text-2xl font-bold text-white">--</div>
+                        <div id="engagementDetails" class="text-xs text-gray-400">No data</div>
+                    </div>
+
+                    <!-- Behavior Issues -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-red-400 font-medium text-sm">⚠️ Behavior</h3>
+                            <div id="behaviorIndicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                        </div>
+                        <div id="behaviorValue" class="text-2xl font-bold text-white">--</div>
+                        <div id="behaviorDetails" class="text-xs text-gray-400">No issues</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time Insights -->
+            <div id="realTimeInsights" class="hidden">
+                <h3 class="text-lg font-semibold text-white mb-4">Real-Time Insights</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Live Audio Analysis -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <h4 class="text-blue-400 font-medium mb-3">🎤 Live Audio Analysis</h4>
+                        <div id="audioAnalysis" class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Reading Fluency:</span>
+                                <span id="readingFluency" class="text-white font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Pronunciation:</span>
+                                <span id="pronunciation" class="text-white font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Confidence Level:</span>
+                                <span id="confidenceLevel" class="text-white font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Classroom Noise:</span>
+                                <span id="classroomNoise" class="text-white font-medium">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Behavior Analysis -->
+                    <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                        <h4 class="text-green-400 font-medium mb-3">👁️ Behavior Analysis</h4>
+                        <div id="behaviorAnalysis" class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Attention Level:</span>
+                                <span id="attentionLevel" class="text-white font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Participation:</span>
+                                <span id="participation" class="text-white font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Disruptions:</span>
+                                <span id="disruptions" class="text-white font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300 text-sm">Group Dynamics:</span>
+                                <span id="groupDynamics" class="text-white font-medium">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Alerts -->
+                <div id="liveAlerts" class="mt-6 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg p-4 border border-red-500/30">
+                    <h4 class="text-red-400 font-medium mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        Live Alerts
+                    </h4>
+                    <div id="alertsList" class="text-gray-300 space-y-2">
+                        <div class="text-sm">No alerts at the moment</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Controls -->
+            <div id="monitoringControls" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button id="toggleAudioMonitoring" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🎤 Audio Monitoring: OFF
+                </button>
+                <button id="toggleVideoMonitoring" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    📹 Video Monitoring: OFF
+                </button>
+                <button id="generateReport" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    📊 Generate Report
+                </button>
+            </div>
+
+            <!-- Monitoring Transcription & AI Analysis Results -->
+            <div id="monitoringTranscriptionResults" class="hidden mt-8">
+                <h3 class="text-md font-medium text-gray-300 mb-3">Transcription Results:</h3>
+                <div id="monitoringTranscriptionText" class="bg-dark-700 p-4 rounded-lg border border-dark-600 text-gray-200 mb-4"></div>
+                <button id="monitoringAnalyzeTranscription" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🤖 Analyze with AI
+                </button>
+            </div>
+            <div id="monitoringAIAnalysisResults" class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mt-6 hidden">
+                <h2 class="text-lg font-semibold text-white mb-4">🤖 AI Analysis Results</h2>
+                <div id="monitoringAIAnalysisContent" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Real-Time Classroom Monitoring System
+let monitoringActive = false;
+let audioMonitoring = false;
+let videoMonitoring = false;
+let audioStream = null;
+let videoStream = null;
+let monitoringInterval = null;
+let analysisData = {
+    readingQuality: 0,
+    noiseLevel: 0,
+    engagement: 0,
+    behaviorIssues: 0,
+    alerts: []
+};
+
+// Voice recording variables (from tools.html)
+let mediaRecorder;
+let audioChunks = [];
+let recording = false;
+let stream = null;
+
+// Start/Stop Monitoring
+document.getElementById('startMonitoring').addEventListener('click', function() {
+    if (!monitoringActive) {
+        startMonitoring();
+    }
+});
+
+document.getElementById('stopMonitoring').addEventListener('click', function() {
+    if (monitoringActive) {
+        stopMonitoring();
+    }
+});
+
+function startMonitoring() {
+    monitoringActive = true;
+    document.getElementById('startMonitoring').classList.add('hidden');
+    document.getElementById('stopMonitoring').classList.remove('hidden');
+    document.getElementById('realTimeInsights').classList.remove('hidden');
+    
+    // Start periodic analysis
+    monitoringInterval = setInterval(performAnalysis, 5000); // Analyze every 5 seconds
+    
+    console.log('Classroom monitoring started');
+}
+
+function stopMonitoring() {
+    monitoringActive = false;
+    document.getElementById('startMonitoring').classList.remove('hidden');
+    document.getElementById('stopMonitoring').classList.add('hidden');
+    
+    // Stop periodic analysis
+    if (monitoringInterval) {
+        clearInterval(monitoringInterval);
+        monitoringInterval = null;
+    }
+    
+    // Stop streams
+    if (audioStream) {
+        audioStream.getTracks().forEach(track => track.stop());
+        audioStream = null;
+    }
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+    
+    console.log('Classroom monitoring stopped');
+}
+
+// Audio Monitoring
+document.getElementById('toggleAudioMonitoring').addEventListener('click', function() {
+    if (audioMonitoring) {
+        stopAudioMonitoring();
+    } else {
+        startAudioMonitoring();
+    }
+});
+
+function startAudioMonitoring() {
+    if (!monitoringActive) {
+        alert('Please start monitoring first');
+        return;
+    }
+    
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            audioStream = stream;
+            audioMonitoring = true;
+            document.getElementById('toggleAudioMonitoring').textContent = '🎤 Audio Monitoring: ON';
+            document.getElementById('toggleAudioMonitoring').classList.remove('bg-blue-600');
+            document.getElementById('toggleAudioMonitoring').classList.add('bg-green-600');
+            
+            // Start audio analysis
+            analyzeAudio(stream);
+        })
+        .catch(err => {
+            console.error('Error accessing microphone:', err);
+            alert('Unable to access microphone for audio monitoring');
+        });
+}
+
+function stopAudioMonitoring() {
+    if (audioStream) {
+        audioStream.getTracks().forEach(track => track.stop());
+        audioStream = null;
+    }
+    audioMonitoring = false;
+    document.getElementById('toggleAudioMonitoring').textContent = '🎤 Audio Monitoring: OFF';
+    document.getElementById('toggleAudioMonitoring').classList.remove('bg-green-600');
+    document.getElementById('toggleAudioMonitoring').classList.add('bg-blue-600');
+}
+
+// Video Monitoring
+document.getElementById('toggleVideoMonitoring').addEventListener('click', function() {
+    if (videoMonitoring) {
+        stopVideoMonitoring();
+    } else {
+        startVideoMonitoring();
+    }
+});
+
+function startVideoMonitoring() {
+    if (!monitoringActive) {
+        alert('Please start monitoring first');
+        return;
+    }
+    
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            videoStream = stream;
+            videoMonitoring = true;
+            document.getElementById('toggleVideoMonitoring').textContent = '📹 Video Monitoring: ON';
+            document.getElementById('toggleVideoMonitoring').classList.remove('bg-green-600');
+            document.getElementById('toggleVideoMonitoring').classList.add('bg-red-600');
+            
+            // Start video analysis
+            analyzeVideo(stream);
+        })
+        .catch(err => {
+            console.error('Error accessing camera:', err);
+            alert('Unable to access camera for video monitoring');
+        });
+}
+
+function stopVideoMonitoring() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+    videoMonitoring = false;
+    document.getElementById('toggleVideoMonitoring').textContent = '📹 Video Monitoring: OFF';
+    document.getElementById('toggleVideoMonitoring').classList.remove('bg-red-600');
+    document.getElementById('toggleVideoMonitoring').classList.add('bg-green-600');
+}
+
+// Audio Analysis
+function analyzeAudio(stream) {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioContext.createMediaStreamSource(stream);
+    const analyser = audioContext.createAnalyser();
+    
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    
+    source.connect(analyser);
+    
+    function updateAudioAnalysis() {
+        if (!audioMonitoring) return;
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        // Calculate noise level
+        const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+        const noiseLevel = Math.round((average / 255) * 100);
+        
+        // Analyze for reading patterns
+        const readingQuality = analyzeReadingPatterns(dataArray);
+        
+        // Update UI
+        updateNoiseLevel(noiseLevel);
+        updateReadingQuality(readingQuality);
+        
+        // Continue analysis
+        requestAnimationFrame(updateAudioAnalysis);
+    }
+    
+    updateAudioAnalysis();
+}
+
+function analyzeReadingPatterns(dataArray) {
+    // Simple analysis for reading patterns
+    // In a real implementation, this would use more sophisticated speech recognition
+    const lowFreq = dataArray.slice(0, 10).reduce((a, b) => a + b) / 10;
+    const midFreq = dataArray.slice(10, 50).reduce((a, b) => a + b) / 40;
+    const highFreq = dataArray.slice(50, 100).reduce((a, b) => a + b) / 50;
+    
+    // Reading typically has more mid-frequency content
+    const readingScore = Math.round((midFreq / 255) * 100);
+    return Math.min(readingScore, 100);
+}
+
+// Video Analysis
+function analyzeVideo(stream) {
+    const video = document.createElement('video');
+    video.srcObject = stream;
+    video.play();
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function updateVideoAnalysis() {
+        if (!videoMonitoring) return;
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        
+        // Simple motion detection
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const motionLevel = detectMotion(imageData);
+        
+        // Analyze behavior patterns
+        const behaviorScore = analyzeBehaviorPatterns(motionLevel);
+        
+        // Update UI
+        updateEngagement(behaviorScore);
+        updateBehaviorIssues(motionLevel);
+        
+        // Continue analysis
+        requestAnimationFrame(updateVideoAnalysis);
+    }
+    
+    updateVideoAnalysis();
+}
+
+function detectMotion(imageData) {
+    // Simple motion detection based on pixel changes
+    // In a real implementation, this would use computer vision
+    const data = imageData.data;
+    let motionPixels = 0;
+    
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Simple threshold for motion detection
+        if (r > 100 || g > 100 || b > 100) {
+            motionPixels++;
+        }
+    }
+    
+    return Math.round((motionPixels / (data.length / 4)) * 100);
+}
+
+function analyzeBehaviorPatterns(motionLevel) {
+    // Convert motion level to engagement score
+    if (motionLevel < 10) return 20; // Low engagement
+    if (motionLevel < 30) return 50; // Medium engagement
+    if (motionLevel < 60) return 80; // High engagement
+    return 100; // Very high engagement
+}
+
+// UI Update Functions
+function updateReadingQuality(score) {
+    const indicator = document.getElementById('readingQualityIndicator');
+    const value = document.getElementById('readingQualityValue');
+    const details = document.getElementById('readingQualityDetails');
+    
+    value.textContent = score + '%';
+    
+    if (score >= 80) {
+        indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+        details.textContent = 'Excellent reading';
+    } else if (score >= 60) {
+        indicator.className = 'w-3 h-3 rounded-full bg-yellow-500';
+        details.textContent = 'Good reading';
+    } else if (score >= 40) {
+        indicator.className = 'w-3 h-3 rounded-full bg-orange-500';
+        details.textContent = 'Needs improvement';
+    } else {
+        indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+        details.textContent = 'Poor reading';
+    }
+    
+    // Update detailed analysis
+    document.getElementById('readingFluency').textContent = score + '%';
+    document.getElementById('pronunciation').textContent = Math.round(score * 0.8) + '%';
+    document.getElementById('confidenceLevel').textContent = Math.round(score * 0.9) + '%';
+}
+
+function updateNoiseLevel(level) {
+    const indicator = document.getElementById('noiseLevelIndicator');
+    const value = document.getElementById('noiseLevelValue');
+    const details = document.getElementById('noiseLevelDetails');
+    
+    value.textContent = level + '%';
+    
+    if (level < 30) {
+        indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+        details.textContent = 'Quiet classroom';
+    } else if (level < 60) {
+        indicator.className = 'w-3 h-3 rounded-full bg-yellow-500';
+        details.textContent = 'Moderate noise';
+    } else if (level < 80) {
+        indicator.className = 'w-3 h-3 rounded-full bg-orange-500';
+        details.textContent = 'High noise level';
+    } else {
+        indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+        details.textContent = 'Very noisy';
+    }
+    
+    // Update detailed analysis
+    document.getElementById('classroomNoise').textContent = level + '%';
+}
+
+function updateEngagement(score) {
+    const indicator = document.getElementById('engagementIndicator');
+    const value = document.getElementById('engagementValue');
+    const details = document.getElementById('engagementDetails');
+    
+    value.textContent = score + '%';
+    
+    if (score >= 80) {
+        indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+        details.textContent = 'Highly engaged';
+    } else if (score >= 60) {
+        indicator.className = 'w-3 h-3 rounded-full bg-yellow-500';
+        details.textContent = 'Moderately engaged';
+    } else if (score >= 40) {
+        indicator.className = 'w-3 h-3 rounded-full bg-orange-500';
+        details.textContent = 'Low engagement';
+    } else {
+        indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+        details.textContent = 'Disengaged';
+    }
+    
+    // Update detailed analysis
+    document.getElementById('attentionLevel').textContent = score + '%';
+    document.getElementById('participation').textContent = Math.round(score * 0.7) + '%';
+}
+
+function updateBehaviorIssues(level) {
+    const indicator = document.getElementById('behaviorIndicator');
+    const value = document.getElementById('behaviorValue');
+    const details = document.getElementById('behaviorDetails');
+    
+    const issues = Math.round(level / 10);
+    value.textContent = issues;
+    
+    if (issues === 0) {
+        indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+        details.textContent = 'No issues';
+    } else if (issues <= 2) {
+        indicator.className = 'w-3 h-3 rounded-full bg-yellow-500';
+        details.textContent = 'Minor issues';
+    } else if (issues <= 5) {
+        indicator.className = 'w-3 h-3 rounded-full bg-orange-500';
+        details.textContent = 'Some issues';
+    } else {
+        indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+        details.textContent = 'Major issues';
+    }
+    
+    // Update detailed analysis
+    document.getElementById('disruptions').textContent = issues;
+    document.getElementById('groupDynamics').textContent = issues <= 2 ? 'Good' : 'Needs attention';
+}
+
+// Periodic Analysis
+function performAnalysis() {
+    if (!monitoringActive) return;
+    
+    // Simulate real-time analysis
+    const readingQuality = Math.floor(Math.random() * 40) + 60; // 60-100
+    const noiseLevel = Math.floor(Math.random() * 50) + 20; // 20-70
+    const engagement = Math.floor(Math.random() * 40) + 60; // 60-100
+    const behaviorIssues = Math.floor(Math.random() * 3); // 0-2
+    
+    // Update analysis data
+    analysisData.readingQuality = readingQuality;
+    analysisData.noiseLevel = noiseLevel;
+    analysisData.engagement = engagement;
+    analysisData.behaviorIssues = behaviorIssues;
+    
+    // Check for alerts
+    checkForAlerts();
+    
+    // Send data to backend for AI analysis
+    sendAnalysisData();
+}
+
+function checkForAlerts() {
+    const alerts = [];
+    
+    if (analysisData.noiseLevel > 70) {
+        alerts.push('⚠️ High noise level detected - consider quieting the class');
+    }
+    
+    if (analysisData.readingQuality < 50) {
+        alerts.push('📖 Reading quality is low - students may need additional support');
+    }
+    
+    if (analysisData.engagement < 50) {
+        alerts.push('👥 Low student engagement - consider changing activities');
+    }
+    
+    if (analysisData.behaviorIssues > 3) {
+        alerts.push('⚠️ Multiple behavior issues detected - intervention may be needed');
+    }
+    
+    // Update alerts display
+    const alertsList = document.getElementById('alertsList');
+    if (alerts.length > 0) {
+        alertsList.innerHTML = alerts.map(alert => 
+            `<div class="text-sm text-red-300">${alert}</div>`
+        ).join('');
+    } else {
+        alertsList.innerHTML = '<div class="text-sm">No alerts at the moment</div>';
+    }
+}
+
+function sendAnalysisData() {
+    // Send analysis data to backend for AI processing
+    fetch('/feedback/real-time-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            reading_quality: analysisData.readingQuality,
+            noise_level: analysisData.noiseLevel,
+            engagement: analysisData.engagement,
+            behavior_issues: analysisData.behaviorIssues,
+            timestamp: new Date().toISOString()
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.insights) {
+            // Update with AI insights
+            updateAIInsights(data.insights);
+        }
+    })
+    .catch(error => {
+        console.error('Error sending analysis data:', error);
+    });
+}
+
+function updateAIInsights(insights) {
+    // Update UI with AI-generated insights
+    if (insights.recommendations) {
+        // Update recommendations in real-time
+        console.log('AI Insights:', insights);
+    }
+}
+
+// Generate Report
+document.getElementById('generateReport').addEventListener('click', function() {
+    if (!monitoringActive) {
+        alert('Please start monitoring first to generate a report');
+        return;
+    }
+    
+    generateClassroomReport();
+});
+
+function generateClassroomReport() {
+    const reportData = {
+        duration: '45 minutes',
+        reading_quality: analysisData.readingQuality,
+        noise_level: analysisData.noiseLevel,
+        engagement: analysisData.engagement,
+        behavior_issues: analysisData.behaviorIssues,
+        alerts: analysisData.alerts,
+        timestamp: new Date().toISOString()
+    };
+    
+    fetch('/feedback/generate-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reportData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Classroom report generated successfully!');
+            // Could download or display the report
+        } else {
+            alert('Error generating report: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error generating report:', error);
+        alert('Error generating report');
+    });
+}
+
+// --- Monitoring Audio Recording Integration ---
+let monitoringMediaRecorder;
+let monitoringAudioChunks = [];
+let monitoringStream = null;
+
+// Override Start/Stop Monitoring for audio recording
+const startBtn = document.getElementById('startMonitoring');
+const stopBtn = document.getElementById('stopMonitoring');
+const transcriptionDiv = document.getElementById('monitoringTranscriptionResults');
+const transcriptionTextDiv = document.getElementById('monitoringTranscriptionText');
+const analyzeBtn = document.getElementById('monitoringAnalyzeTranscription');
+const aiResultsDiv = document.getElementById('monitoringAIAnalysisResults');
+const aiContentDiv = document.getElementById('monitoringAIAnalysisContent');
+
+startBtn.addEventListener('click', async function() {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+        alert('Voice recording not supported in this browser.');
+        return;
+    }
+    monitoringAudioChunks = [];
+    try {
+        monitoringStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        monitoringMediaRecorder = new MediaRecorder(monitoringStream);
+        monitoringMediaRecorder.ondataavailable = e => monitoringAudioChunks.push(e.data);
+        monitoringMediaRecorder.onstop = async () => {
+            // Send audio to backend
+            const audioBlob = new Blob(monitoringAudioChunks, { type: 'audio/webm' });
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'monitoring_audio.webm');
+            transcriptionTextDiv.textContent = 'Transcribing...';
+            transcriptionDiv.classList.remove('hidden');
+            try {
+                const res = await fetch('/speech-to-text', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.text) {
+                    transcriptionTextDiv.textContent = data.text;
+                    analyzeBtn.disabled = false;
+                } else {
+                    transcriptionTextDiv.textContent = 'Could not transcribe audio.';
+                    analyzeBtn.disabled = true;
+                }
+            } catch (err) {
+                transcriptionTextDiv.textContent = 'Error: ' + err.message;
+                analyzeBtn.disabled = true;
+            }
+            if (monitoringStream) {
+                monitoringStream.getTracks().forEach(track => track.stop());
+                monitoringStream = null;
+            }
+        };
+        monitoringMediaRecorder.start();
+        monitoringActive = true;
+        startBtn.classList.add('hidden');
+        stopBtn.classList.remove('hidden');
+        transcriptionDiv.classList.add('hidden');
+        aiResultsDiv.classList.add('hidden');
+    } catch (err) {
+        alert('Microphone access denied.');
+        monitoringActive = false;
+    }
+});
+
+stopBtn.addEventListener('click', function() {
+    if (monitoringMediaRecorder && monitoringMediaRecorder.state === 'recording') {
+        monitoringMediaRecorder.stop();
+        monitoringActive = false;
+        startBtn.classList.remove('hidden');
+        stopBtn.classList.add('hidden');
+    }
+});
+
+// AI Analysis of Monitoring Transcription
+analyzeBtn.addEventListener('click', async function() {
+    const transcriptionText = transcriptionTextDiv.textContent;
+    if (!transcriptionText) {
+        alert('No transcription available for analysis');
+        return;
+    }
+    analyzeBtn.textContent = 'Analyzing...';
+    analyzeBtn.disabled = true;
+    try {
+        const response = await fetch('/feedback/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                feedback_data: [{
+                    type: 'voice',
+                    value: transcriptionText,
+                    timestamp: new Date().toISOString()
+                }],
+                lesson_context: 'Classroom audio monitoring analysis'
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            displayMonitoringAIAnalysis(data.suggestions);
+            aiResultsDiv.classList.remove('hidden');
+        } else {
+            alert('Error analyzing transcription: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        alert('Error analyzing transcription: ' + error.message);
+    } finally {
+        analyzeBtn.textContent = '🤖 Analyze with AI';
+        analyzeBtn.disabled = false;
+    }
+});
+
+function displayMonitoringAIAnalysis(suggestions) {
+    // Handle case where suggestions might be a string or have unexpected format
+    if (typeof suggestions === 'string') {
+        // If it's a string, display it as raw text with markdown conversion
+        const formattedText = convertMarkdownToHTML(suggestions);
+        aiContentDiv.innerHTML = `
+            <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                <h3 class="text-blue-400 font-medium mb-3">AI Analysis Results</h3>
+                <div class="text-gray-300 prose prose-invert max-w-none">${formattedText}</div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Ensure suggestions is an object with expected properties
+    if (!suggestions || typeof suggestions !== 'object') {
+        aiContentDiv.innerHTML = `
+            <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                <h3 class="text-red-400 font-medium mb-3">Error</h3>
+                <div class="text-gray-300">Unable to parse AI suggestions. Please try again.</div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Convert markdown content to HTML for each section
+    const formatSection = (items) => {
+        if (!items || items.length === 0) {
+            return '<p class="text-gray-400">No specific items identified</p>';
+        }
+        return items.map(item => {
+            const formattedItem = convertMarkdownToHTML(item);
+            return `<div class="mb-3">${formattedItem}</div>`;
+        }).join('');
+    };
+    
+    aiContentDiv.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                <h3 class="text-blue-400 font-medium mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Areas to Improve
+                </h3>
+                <div class="text-gray-300 prose prose-invert max-w-none">
+                    ${formatSection(suggestions.improvements)}
+                </div>
+            </div>
+            <div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+                <h3 class="text-green-400 font-medium mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Keep Doing Well
+                </h3>
+                <div class="text-gray-300 prose prose-invert max-w-none">
+                    ${formatSection(suggestions.strengths)}
+                </div>
+            </div>
+        </div>
+        <div class="mt-6 bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-lg p-4 border border-purple-500/30">
+            <h3 class="text-purple-400 font-medium mb-3 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                Next Class Recommendations
+            </h3>
+            <div class="text-gray-300 prose prose-invert max-w-none">
+                ${formatSection(suggestions.next_class_recommendations)}
+            </div>
+        </div>
+        <div class="mt-6 bg-gradient-to-r from-orange-900/20 to-red-900/20 rounded-lg p-4 border border-orange-500/30">
+            <h3 class="text-orange-400 font-medium mb-3 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Action Items
+            </h3>
+            <div class="text-gray-300 prose prose-invert max-w-none">
+                ${formatSection(suggestions.action_items)}
+            </div>
+        </div>
+    `;
+}
+
+// Helper function to convert markdown to HTML
+function convertMarkdownToHTML(text) {
+    if (!text) return '';
+    
+    return text
+        // Convert bold text (**text** or __text__)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.*?)__/g, '<strong>$1</strong>')
+        
+        // Convert italic text (*text* or _text_)
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/_(.*?)_/g, '<em>$1</em>')
+        
+        // Convert bullet points (• or - or *)
+        .replace(/^[•\-\*]\s*/gm, '<span class="text-blue-400 mr-2">•</span>')
+        
+        // Convert numbered lists
+        .replace(/^(\d+)\.\s*/gm, '<span class="text-blue-400 mr-2">$1.</span>')
+        
+        // Convert line breaks
+        .replace(/\n/g, '<br>')
+        
+        // Convert emphasis markers
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        
+        // Convert suggestions with ** prefix
+        .replace(/\*\*Suggestion:\*\*/g, '<strong class="text-green-400">Suggestion:</strong>')
+        .replace(/\*\*Teacher Suggestions:\*\*/g, '<strong class="text-orange-400">Teacher Suggestions:</strong>');
+}
+
+// Initialize monitoring controls
+function initializeAudioMonitoring() {
+    // Audio monitoring initialization logic
+}
+
+function initializeVideoMonitoring() {
+    // Video monitoring initialization logic
+}
+</script>
+{% endblock %} 

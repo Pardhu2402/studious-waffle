@@ -1,0 +1,11 @@
+# Eye Tracking Dependencies for Sahayak+
+# Install these packages to enable eye tracking functionality
+
+opencv-python==4.8.1.78
+mediapipe==0.10.7
+pyautogui==0.9.54
+websockets==11.0.3
+numpy==1.24.3
+
+# Optional: for better performance
+# opencv-contrib-python==4.8.1.78

@@ -1,0 +1,87 @@
+<style>
+.right-sidebar-glass,
+.bg-dark-700.rounded-lg,
+.bg-dark-700 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+/* Remove solid/gradient backgrounds from quick access and tip sections */
+.bg-gradient-to-r,
+.bg-gradient-to-r.from-yellow-900\/50.to-orange-900\/50,
+.bg-gradient-to-r.from-blue-900\/50.to-indigo-900\/50,
+.bg-gradient-to-r.from-green-900\/50.to-emerald-900\/50,
+.bg-gradient-to-r.from-purple-900\/50.to-pink-900\/50 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px) !important;
+}
+/* Remove any solid fill after buttons */
+.solid-after-buttons,
+.after-buttons-solid,
+.right-sidebar-solid-fill {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+</style>
+<div class="right-sidebar-glass p-4">
+        <a href="https://t.me/SahayakPlus_bot" target="_blank" style="text-decoration:none;">
+  <button style="padding:10px 20px; background-color:#0088cc; color:white; border:none; border-radius:6px;">
+    💬 Open Sahayak+ Telegram Bot
+    
+  </button>
+</a>
+    <!-- Trending Prompts -->
+    <div class="mb-6">
+        <h3 class="text-lg font-semibold text-white mb-3" data-translate="trending_prompts">Trending Prompts</h3>
+        <div class="space-y-2">
+            <a href="/tools?prompt=Create%20a%20Hindi%20story%20about%20soil%20types%20for%205th%20grade" class="p-3 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors cursor-pointer border border-dark-600 block">
+                <p class="text-sm text-gray-300" data-translate="prompt_1">Create a Hindi story about soil types for 5th grade</p>
+            </a>
+            <a href="/tools?prompt=Explain%20water%20cycle%20in%20Telugu%20with%20worksheet" class="p-3 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors cursor-pointer border border-dark-600 block">
+                <p class="text-sm text-gray-300" data-translate="prompt_2">Explain water cycle in Telugu with worksheet</p>
+            </a>
+            <a href="/tools?prompt=Math%20games%20for%20multi-grade%20classroom" class="p-3 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors cursor-pointer border border-dark-600 block">
+                <p class="text-sm text-gray-300" data-translate="prompt_3">Math games for multi-grade classroom</p>
+            </a>
+            <a href="/tools?prompt=Festival%20activities%20for%20primary%20students" class="p-3 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors cursor-pointer border border-dark-600 block">
+                <p class="text-sm text-gray-300" data-translate="prompt_4">Festival activities for primary students</p>
+            </a>
+        </div>
+    </div>
+    <!-- Quick Access -->
+    <div class="mb-6">
+        <h3 class="text-lg font-semibold text-white mb-3" data-translate="quick_access">Quick Access</h3>
+        <div class="space-y-2">
+            <a href="{{ url_for('image_gen_page') }}" class="flex items-center space-x-2 p-3 bg-gradient-to-r from-yellow-900/50 to-orange-900/50 rounded-lg hover:from-yellow-800/50 hover:to-orange-800/50 transition-all border border-yellow-700/50">
+                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="4" y="4" width="16" height="16" rx="2"/>
+                    <path d="M8 8h8M8 12h8M8 16h8"/>
+                </svg>
+                <span class="text-sm font-medium text-yellow-300" data-translate="diagram_generator">Diagram Generator</span>
+            </a>
+            <a href="{{ url_for('tools') }}" class="flex items-center space-x-2 p-3 bg-gradient-to-r from-blue-900/50 to-indigo-900/50 rounded-lg hover:from-blue-800/50 hover:to-indigo-800/50 transition-all border border-blue-700/50">
+                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+                <span class="text-sm font-medium text-blue-300" data-translate="upload_image_to_worksheet">Upload Image → Worksheet</span>
+            </a>
+            <button class="w-full flex items-center space-x-2 p-3 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-lg hover:from-green-800/50 hover:to-emerald-800/50 transition-all border border-green-700/50">
+                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+                <span class="text-sm font-medium text-green-300" data-translate="voice_to_text_ask">Voice-to-Text Ask</span>
+            </button>
+            <button class="w-full flex items-center space-x-2 p-3 bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-lg hover:from-purple-800/50 hover:to-pink-800/50 transition-all border border-purple-700/50">
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="text-sm font-medium text-purple-300" data-translate="ai_teaching_analytics">AI Teaching Analytics</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tip of the Day -->
+    <div class="bg-gradient-to-r from-blue-900/50 to-indigo-900/50 rounded-lg p-4 border border-blue-700/50">
+        <h4 class="font-semibold text-blue-200 mb-2" data-translate="tip_of_the_day">Tip of the Day</h4>
+        <p class="text-sm text-blue-100" data-translate="tip_text">"Link videos after every concept to engage visual learners!"</p>
+    </div>
+</div> 

@@ -1,0 +1,690 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl">
+                    📚
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-semibold text-white">DIKSHA Content Library</h1>
+                    <p class="text-gray-300">Access, download, and process educational content from DIKSHA platform</p>
+                </div>
+                <button onclick="refreshContent()">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <h2 class="text-lg font-semibold text-white mb-4">🔍 Search DIKSHA Content</h2>
+            <form id="searchForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Search Query</label>
+                        <input type="text" id="searchQuery" placeholder="Enter keywords..." 
+                               class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white placeholder-gray-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                        <select id="subjectFilter" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                            <option value="">All Subjects</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Science">Science</option>
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                            <option value="Social Studies">Social Studies</option>
+                            <option value="History">History</option>
+                            <option value="Geography">Geography</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">School Level</label>
+                        <select id="schoolLevelFilter" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                            <option value="">Select School Level</option>
+                            <option value="Primary">Primary</option>
+                            <option value="Middle">Middle</option>
+                            <option value="High School">High School</option>
+                            <option value="UG">UG</option>
+                            <option value="College">College</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Grade</label>
+                        <select id="gradeFilter" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                            <option value="">Select Grade</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Board</label>
+                        <select id="boardFilter" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-linkedin focus:border-transparent bg-dark-700 text-white">
+                            <option value="">All Boards</option>
+                            <option value="CBSE">CBSE</option>
+                            <option value="State Board">State Board</option>
+                            <option value="ICSE">ICSE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button type="submit" class="bg-linkedin text-white px-6 py-2 rounded-lg hover:bg-linkedinHover transition-colors font-medium">
+                        🔍 Search Content
+                    </button>
+                    <button type="button" onclick="searchLocalContent()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                        📂 Local Library
+                    </button>
+                    <button type="button" onclick="downloadSampleContent()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                        ⬇️ Download Sample
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Content Results -->
+        <div id="contentResults" class="space-y-6">
+            <!-- Results will be populated here -->
+        </div>
+
+        <!-- AI Processing Panel -->
+        <div id="aiProcessingPanel" class="hidden bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-8 mt-8">
+            <h2 class="text-2xl font-bold text-white mb-6 border-b pb-2">🧠 AI Content Processing</h2>
+            <!-- Current Content Indicator -->
+            <div id="currentContentIndicator" class="mb-6 p-4 bg-blue-900/30 rounded-lg border-2 border-blue-400 flex items-center justify-between shadow-sm">
+                <div>
+                    <span class="text-base font-semibold text-blue-200">Currently Selected:</span>
+                    <span id="selectedContentName" class="text-base text-blue-100 ml-2 font-medium"></span>
+                </div>
+                <button onclick="clearCurrentContent()" class="text-blue-400 hover:text-blue-200 text-sm font-semibold underline">
+                    Change Selection
+                </button>
+            </div>
+            <!-- Loading Indicator -->
+            <div id="aiLoadingIndicator" class="hidden mb-6 p-6 bg-yellow-900/30 rounded-lg border-2 border-yellow-400 text-center">
+                <div class="flex items-center justify-center space-x-3">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                    <span class="text-lg font-semibold text-yellow-200">AI is processing your content...</span>
+                </div>
+                <p class="text-sm text-yellow-200 mt-2">This may take a few moments depending on the content size.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-2">
+                <button onclick="processContent('summarize')" class="flex flex-col items-center justify-center p-6 bg-blue-900/30 rounded-xl border-2 border-blue-200 hover:bg-blue-800/40 transition-colors shadow group">
+                    <span class="text-3xl mb-2">📝</span>
+                    <span class="font-bold text-blue-200 text-lg mb-1">Generate Summary</span>
+                    <span class="text-sm text-blue-100">Student-friendly summaries</span>
+                </button>
+                <button onclick="processContent('quiz')" class="flex flex-col items-center justify-center p-6 bg-green-900/30 rounded-xl border-2 border-green-200 hover:bg-green-800/40 transition-colors shadow group">
+                    <span class="text-3xl mb-2">❓</span>
+                    <span class="font-bold text-green-200 text-lg mb-1">Create Quiz</span>
+                    <span class="text-sm text-green-100">Interactive assessments</span>
+                </button>
+                <button onclick="processContent('worksheet')" class="flex flex-col items-center justify-center p-6 bg-purple-900/30 rounded-xl border-2 border-purple-200 hover:bg-purple-800/40 transition-colors shadow group">
+                    <span class="text-3xl mb-2">📄</span>
+                    <span class="font-bold text-purple-200 text-lg mb-1">Generate Worksheet</span>
+                    <span class="text-sm text-purple-100">Classroom activities</span>
+                </button>
+                <button onclick="processContent('mcq')" class="flex flex-col items-center justify-center p-6 bg-orange-900/30 rounded-xl border-2 border-orange-200 hover:bg-orange-800/40 transition-colors shadow group">
+                    <span class="text-3xl mb-2">🎯</span>
+                    <span class="font-bold text-orange-200 text-lg mb-1">MCQ Questions</span>
+                    <span class="text-sm text-orange-100">Quick assessments</span>
+                </button>
+            </div>
+        </div>
+        <!-- AI Results -->
+        <div id="aiResults" class="hidden space-y-8 mt-8">
+            <!-- AI processing results will be shown here -->
+        </div>
+    </div>
+</div>
+
+<!-- Content Detail Modal -->
+<div id="contentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-dark-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-dark-700">
+            <div class="flex items-center justify-between p-6 border-b border-dark-700">
+                <h3 class="text-lg font-semibold text-white" id="modalTitle">Content Details</h3>
+                <button onclick="closeContentModal()" class="text-gray-400 hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div id="modalContent">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-white.dark\:bg-dark-800.rounded-xl,
+.bg-white.dark\:bg-dark-800.rounded-lg,
+.bg-white.dark\:bg-dark-800.p-8,
+.bg-white.dark\:bg-dark-800.p-6,
+.bg-white.dark\:bg-dark-800,
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+
+<script>
+let currentContent = null;
+let searchResults = [];
+
+// Search DIKSHA content
+document.getElementById('searchForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const query = document.getElementById('searchQuery').value;
+    const subject = document.getElementById('subjectFilter').value;
+    const schoolLevel = document.getElementById('schoolLevelFilter').value;
+    const grade = document.getElementById('gradeFilter').value;
+    const board = document.getElementById('boardFilter').value;
+    
+    const filters = {};
+    if (subject) filters.subject = subject;
+    if (schoolLevel) filters.schoolLevel = schoolLevel;
+    if (grade) filters.gradeLevel = [grade];
+    if (board) filters.board = [board];
+    
+    await searchDIKSHA(query, filters);
+});
+
+async function searchDIKSHA(query, filters) {
+    try {
+        const response = await fetch('/diksha/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: query, filters: filters })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            searchResults = data.content;
+            displaySearchResults(searchResults);
+        } else {
+            alert('Error searching content: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+function displaySearchResults(results) {
+    const container = document.getElementById('contentResults');
+    
+    if (results.length === 0) {
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🔍</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">No content found</h3>
+                <p class="text-gray-600">Try adjusting your search criteria or download sample content.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = results.map((book, index) => {
+        // Helper function to safely format arrays or strings
+        const formatField = (field) => {
+            if (!field) return 'N/A';
+            if (Array.isArray(field)) {
+                return field.join(', ');
+            }
+            return field.toString();
+        };
+        
+        return `
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">${book.name || 'Untitled'}</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
+                                <div>
+                                    <span class="font-medium">Subject:</span> ${formatField(book.subject)}
+                                </div>
+                                <div>
+                                    <span class="font-medium">Grade:</span> ${formatField(book.gradeLevel)}
+                                </div>
+                                <div>
+                                    <span class="font-medium">Board:</span> ${formatField(book.board)}
+                                </div>
+                                <div>
+                                    <span class="font-medium">Medium:</span> ${formatField(book.medium)}
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-4">${book.description || 'No description available.'}</p>
+                        </div>
+                        <div class="ml-4 flex flex-col space-y-2">
+                            <button onclick="downloadContent('${book.identifier}')" class="bg-linkedin text-white px-4 py-2 rounded-lg hover:bg-linkedinHover transition-colors font-medium text-sm">
+                                ⬇️ Download
+                            </button>
+                            <button onclick="viewContentDetails('${book.identifier}')" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm">
+                                👁️ Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function downloadContent(bookId) {
+    try {
+        const response = await fetch('/diksha/download', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ book_id: bookId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Content downloaded successfully! Check the local library.');
+            
+            // Automatically load the downloaded content details
+            await viewContentDetails(bookId);
+            
+            // Show AI processing panel
+            document.getElementById('aiProcessingPanel').classList.remove('hidden');
+        } else {
+            alert('Error downloading content: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+async function viewContentDetails(bookId) {
+    try {
+        console.log('Fetching details for book ID:', bookId); // Debug log
+        
+        const response = await fetch(`/diksha/details/${bookId}`);
+        const data = await response.json();
+        
+        console.log('Response data:', data); // Debug log
+        
+        if (data.success) {
+            currentContent = data.content;
+            showContentModal(data.content);
+        } else {
+            console.error('Error response:', data.error); // Debug log
+            alert('Error loading content details: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Network error:', error); // Debug log
+        alert('Network error: ' + error.message);
+    }
+}
+
+function showContentModal(content) {
+    // Helper function to safely format arrays or strings
+    const formatField = (field) => {
+        if (!field) return 'N/A';
+        if (Array.isArray(field)) {
+            return field.join(', ');
+        }
+        return field.toString();
+    };
+    
+    document.getElementById('modalTitle').textContent = content.title || 'Content Details';
+    document.getElementById('modalContent').innerHTML = `
+        <div class="space-y-4">
+            <div>
+                <h4 class="font-semibold text-gray-900">Content Information</h4>
+                <div class="grid grid-cols-2 gap-4 mt-2 text-sm">
+                    <div><span class="font-medium">Subject:</span> ${formatField(content.subject)}</div>
+                    <div><span class="font-medium">Grade:</span> ${formatField(content.grade_level)}</div>
+                    <div><span class="font-medium">Board:</span> ${formatField(content.board)}</div>
+                    <div><span class="font-medium">Medium:</span> ${formatField(content.medium)}</div>
+                </div>
+            </div>
+            ${content.description ? `
+            <div>
+                <h4 class="font-semibold text-gray-900">Description</h4>
+                <p class="text-gray-700 mt-2">${content.description}</p>
+            </div>
+            ` : ''}
+            ${content.content_items ? `
+            <div>
+                <h4 class="font-semibold text-gray-900">Content Items (${content.content_items.length})</h4>
+                <div class="mt-2 space-y-2">
+                    ${content.content_items.map(item => `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <span class="font-medium">${item.name}</span>
+                                <span class="text-sm text-gray-500 ml-2">(${item.media_type})</span>
+                            </div>
+                            <span class="text-sm text-gray-500">${formatFileSize(item.file_size)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    document.getElementById('contentModal').classList.remove('hidden');
+    
+    // Update current content indicator
+    updateCurrentContentIndicator(content.title || 'Unknown Title');
+}
+
+function updateCurrentContentIndicator(contentName) {
+    const indicator = document.getElementById('currentContentIndicator');
+    const nameSpan = document.getElementById('selectedContentName');
+    
+    if (currentContent) {
+        indicator.classList.remove('hidden');
+        nameSpan.textContent = contentName;
+    } else {
+        indicator.classList.add('hidden');
+    }
+}
+
+function clearCurrentContent() {
+    currentContent = null;
+    updateCurrentContentIndicator('');
+    document.getElementById('currentContentIndicator').classList.add('hidden');
+}
+
+function closeContentModal() {
+    document.getElementById('contentModal').classList.add('hidden');
+}
+
+async function processContent(actionType) {
+    if (!currentContent) {
+        // Try to get content from local library if none is selected
+        try {
+            const response = await fetch('/diksha/local');
+            const data = await response.json();
+            
+            if (data.success && data.content.length > 0) {
+                // Auto-select the first available content
+                const firstContent = data.content[0];
+                await viewContentDetails(firstContent.identifier);
+                
+                // Show a notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = `Auto-selected: ${firstContent.name}`;
+                document.body.appendChild(notification);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 3000);
+            } else {
+                alert('Please download content first, then view its details before processing with AI.');
+                return;
+            }
+        } catch (error) {
+            alert('Please download content first, then view its details before processing with AI.');
+            return;
+        }
+    }
+    
+    // Show loading indicator
+    document.getElementById('aiLoadingIndicator').classList.remove('hidden');
+    document.getElementById('aiResults').classList.add('hidden');
+    
+    try {
+        const response = await fetch('/diksha/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                book_id: currentContent.book_id || currentContent.identifier,
+                action_type: actionType 
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Hide loading indicator
+        document.getElementById('aiLoadingIndicator').classList.add('hidden');
+        
+        if (data.success) {
+            displayAIResults(data.results, actionType);
+        } else {
+            alert('Error processing content: ' + data.error);
+        }
+    } catch (error) {
+        // Hide loading indicator
+        document.getElementById('aiLoadingIndicator').classList.add('hidden');
+        alert('Error: ' + error.message);
+    }
+}
+
+function displayAIResults(results, actionType) {
+    const container = document.getElementById('aiResults');
+    container.classList.remove('hidden');
+    
+    const actionNames = {
+        'summarize': 'Summary',
+        'quiz': 'Quiz',
+        'worksheet': 'Worksheet',
+        'mcq': 'MCQ Questions'
+    };
+    
+    const actionColors = {
+        'summarize': 'blue',
+        'quiz': 'green',
+        'worksheet': 'purple',
+        'mcq': 'orange'
+    };
+    
+    const color = actionColors[actionType];
+    
+    container.innerHTML = `
+        <div class="bg-white rounded-xl shadow-lg border-2 border-gray-200 p-8">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-2">🧠 AI Generated ${actionNames[actionType]}</h3>
+            ${Object.entries(results).map(([itemName, result]) => `
+                <div class="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <h4 class="font-semibold text-lg text-gray-900 mb-3">${itemName}</h4>
+                    <div class="prose max-w-none text-gray-800 text-base leading-relaxed mb-6">
+                        ${formatContent(result.content)}
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="previewAIResult('${actionType}', '${itemName}', '${btoa(result.content)}')" class="bg-${color}-600 text-white px-5 py-2 rounded-lg hover:bg-${color}-700 transition-colors font-medium text-sm">
+                            👁️ Preview
+                        </button>
+                        <button onclick="downloadAIResult('${actionType}', '${itemName}', '${btoa(result.content)}')" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                            📥 Download PDF
+                        </button>
+                        <button onclick="shareToFeed('${actionType}', '${itemName}')" class="bg-linkedin text-white px-5 py-2 rounded-lg hover:bg-linkedinHover transition-colors font-medium text-sm">
+                            📰 Share to Feed
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function formatContent(content) {
+    // Convert markdown-like formatting to HTML
+    return content
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+        .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+        .replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-900 mt-4 mb-2">$1</h3>') // H3
+        .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-3">$1</h2>') // H2
+        .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h1>') // H1
+        .replace(/^\* (.*$)/gim, '<li class="ml-4">$1</li>') // Bullet points
+        .replace(/\n\n/g, '</p><p class="mb-3">') // Paragraphs
+        .replace(/\n/g, '<br>'); // Line breaks
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function previewAIResult(actionType, itemName, contentBase64) {
+    const content = atob(contentBase64);
+    const actionNames = {
+        'summarize': 'Summary',
+        'quiz': 'Quiz',
+        'worksheet': 'Worksheet',
+        'mcq': 'MCQ Questions'
+    };
+    
+    // Create modal for preview
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+    modal.innerHTML = `
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-900">Preview: ${actionNames[actionType]} - ${itemName}</h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="prose max-w-none">
+                    ${formatContent(content)}
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="downloadAIResult('${actionType}', '${itemName}', '${contentBase64}')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                    📥 Download PDF
+                </button>
+                <button onclick="this.closest('.fixed').remove()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.remove();
+        }
+    });
+}
+
+async function downloadAIResult(actionType, itemName, contentBase64) {
+    try {
+        const content = atob(contentBase64);
+        const response = await fetch('/diksha/download-ai-result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action_type: actionType,
+                item_name: itemName,
+                content: content
+            })
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${itemName}_${actionType}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            alert('Error downloading file');
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+async function searchLocalContent() {
+    try {
+        const response = await fetch('/diksha/local');
+        const data = await response.json();
+        
+        if (data.success) {
+            searchResults = data.content;
+            displaySearchResults(searchResults);
+        } else {
+            alert('Error loading local content: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+async function downloadSampleContent() {
+    try {
+        const response = await fetch('/diksha/sample');
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Sample content downloaded successfully!');
+            searchLocalContent();
+        } else {
+            alert('Error downloading sample content: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+function refreshContent() {
+    location.reload();
+}
+
+// Close modal when clicking outside
+document.getElementById('contentModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeContentModal();
+    }
+});
+
+// Add event listener for grade filter to populate dynamic grade options
+document.getElementById('schoolLevelFilter').addEventListener('change', function() {
+    const gradeFilter = document.getElementById('gradeFilter');
+    gradeFilter.innerHTML = '';
+    
+    const schoolLevel = document.getElementById('schoolLevelFilter').value;
+    const grades = {
+        'Primary': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        'Middle': ['6', '7', '8', '9', '10', '11', '12'],
+        'High School': ['9', '10', '11', '12'],
+        'UG': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        'College': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+    };
+    
+    grades[schoolLevel].forEach(grade => {
+        const option = document.createElement('option');
+        option.value = grade;
+        option.textContent = grade;
+        gradeFilter.appendChild(option);
+    });
+});
+</script>
+{% endblock %} 

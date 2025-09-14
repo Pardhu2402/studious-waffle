@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-white.dark\:bg-dark-800.rounded-xl,
+.bg-white.dark\:bg-dark-800.rounded-lg,
+.bg-white.dark\:bg-dark-800.p-8,
+.bg-white.dark\:bg-dark-800.p-6,
+.bg-white.dark\:bg-dark-800,
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="max-w-5xl mx-auto py-10 px-2 sm:px-6">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700 mb-8">
+        <h1 class="text-3xl font-bold text-white mb-4">AI-Powered Weekly Lesson Planner</h1>
+        <p class="text-gray-300 mb-6">Automate your lesson planning and save valuable time. Enter your topic, grade level, learning objectives, and language to generate a detailed weekly lesson plan.</p>
+        <form id="lessonPlannerForm" class="space-y-4">
+            <div>
+                <label class="block text-gray-300 mb-1">Topic</label>
+                <input type="text" name="topic" id="topic" class="w-full px-3 py-2 rounded-lg bg-dark-700 border border-dark-600 text-white" required />
+            </div>
+            <div>
+                <label class="block text-gray-300 mb-1">Grade Level</label>
+                <input type="text" name="grade" id="grade" class="w-full px-3 py-2 rounded-lg bg-dark-700 border border-dark-600 text-white" required />
+            </div>
+            <div>
+                <label class="block text-gray-300 mb-1">Learning Objectives</label>
+                <textarea name="objectives" id="objectives" rows="2" class="w-full px-3 py-2 rounded-lg bg-dark-700 border border-dark-600 text-white" required></textarea>
+            </div>
+            <div>
+                <label class="block text-gray-300 mb-1">Language</label>
+                <select name="language" id="language" class="w-full px-3 py-2 rounded-lg bg-dark-700 border border-dark-600 text-white">
+                    <option value="english">English</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="telugu">Telugu</option>
+                    <option value="kannada">Kannada</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold">Generate Lesson Plan</button>
+        </form>
+    </div>
+    <div id="lessonPlanResult"></div>
+</div>
+<script>
+// Simple markdown to HTML (bold, italics, lists, line breaks)
+function markdownToHtml(md) {
+    return md
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>')
+        .replace(/\n?\* (.+)/g, '<li>$1</li>')
+        .replace(/<br><li>/g, '<ul><li>')
+        .replace(/(<\/li>)(?!<li>)/g, '$1</ul>');
+}
+
+document.getElementById('lessonPlannerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const topic = document.getElementById('topic').value;
+    const grade = document.getElementById('grade').value;
+    const objectives = document.getElementById('objectives').value;
+    const language = document.getElementById('language').value;
+    const resultDiv = document.getElementById('lessonPlanResult');
+    resultDiv.innerHTML = '<div class="text-gray-300">Generating lesson plan...</div>';
+    try {
+        const res = await fetch('/api/lesson-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, grade, objectives, language })
+        });
+        const data = await res.json();
+        if (data.success && data.plan) {
+            const plan = data.plan;
+            const days = plan.match(/(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):[\s\S]*?(?=(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):|$)/gi);
+            let html = `<div class='bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700 w-full'>`;
+            html += `<h2 class='text-2xl font-bold text-white mb-2'>Weekly Lesson Plan</h2>`;
+            html += `<h3 class='text-xl font-semibold text-blue-300 mb-6'>${topic}</h3>`;
+            if (days && days.length > 0) {
+                html += `<div class='divide-y divide-dark-700 w-full'>`;
+                days.forEach((day, i) => {
+                    const lines = day.split('\n');
+                    const dayTitle = lines[0];
+                    const dayContent = lines.slice(1).join('\n').trim();
+                    const contentHtml = markdownToHtml(dayContent);
+                    html += `
+                    <div>
+                        <button type='button' class='accordion-btn w-full flex items-center justify-between text-left py-4 px-3 font-semibold text-lg text-blue-300 focus:outline-none transition-colors' onclick='toggleAccordion(this)'>
+                            <span>${dayTitle}</span>
+                            <svg class="chevron w-6 h-6 ml-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div class='accordion-content hidden pl-6 pb-4 text-gray-200 text-base leading-relaxed'>${contentHtml}</div>
+                    </div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class='text-gray-300'>${markdownToHtml(plan)}</div>`;
+            }
+            html += `</div>`;
+            resultDiv.innerHTML = html;
+        } else {
+            resultDiv.innerHTML = `<div class='text-red-400'>${data.error || 'Failed to generate lesson plan.'}</div>`;
+        }
+    } catch (err) {
+        resultDiv.innerHTML = `<div class='text-red-400'>Error: ${err.message}</div>`;
+    }
+});
+
+// Accordion toggle with chevron rotation
+function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const chevron = btn.querySelector('.chevron');
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        content.classList.add('hidden');
+        chevron.style.transform = '';
+    }
+}
+</script>
+{% endblock %} 

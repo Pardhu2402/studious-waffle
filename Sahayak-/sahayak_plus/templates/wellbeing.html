@@ -1,0 +1,730 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8 accessibility-font-size">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700 accessibility-font-size">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0121 14.083V16.5a6 6 0 01-6 6H9a6 6 0 01-6-6v-2.417c0-1.147.166-2.288.487-3.372L12 14z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-xl font-semibold text-white">Disabled Student Support & Scholarship Portal</h1>
+                    <p class="text-gray-300">Specialized support for visually impaired, hearing impaired, speech impaired, and physically challenged students</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disabled Student Support Form -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 accessibility-font-size">
+            <h2 class="text-lg font-semibold text-white mb-4 accessibility-font-size">Disabled Student Profile & Support Requirements</h2>
+            <form id="disabilityForm" class="space-y-6 accessibility-font-size">
+                
+                <!-- Primary Disability Type (Required) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Primary Disability Type *</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center space-x-3 p-3 border border-dark-600 rounded-lg hover:bg-dark-700 cursor-pointer">
+                            <input type="radio" name="primaryDisability" value="visual" required class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500">
+                            <div>
+                                <span class="text-white font-medium">Visual Impairment</span>
+                                <p class="text-gray-400 text-sm">Blind, Low vision, Color blindness</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-dark-600 rounded-lg hover:bg-dark-700 cursor-pointer">
+                            <input type="radio" name="primaryDisability" value="hearing" required class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500">
+                            <div>
+                                <span class="text-white font-medium">Hearing Impairment</span>
+                                <p class="text-gray-400 text-sm">Deaf, Hard of hearing</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-dark-600 rounded-lg hover:bg-dark-700 cursor-pointer">
+                            <input type="radio" name="primaryDisability" value="speech" required class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500">
+                            <div>
+                                <span class="text-white font-medium">Speech Impairment</span>
+                                <p class="text-gray-400 text-sm">Mute, Speech disorders</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-dark-600 rounded-lg hover:bg-dark-700 cursor-pointer">
+                            <input type="radio" name="primaryDisability" value="physical" required class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500">
+                            <div>
+                                <span class="text-white font-medium">Physical Disability</span>
+                                <p class="text-gray-400 text-sm">Locomotor, Mobility issues</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-dark-600 rounded-lg hover:bg-dark-700 cursor-pointer">
+                            <input type="radio" name="primaryDisability" value="intellectual" required class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500">
+                            <div>
+                                <span class="text-white font-medium">Intellectual Disability</span>
+                                <p class="text-gray-400 text-sm">Learning difficulties, Cognitive impairment</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-dark-600 rounded-lg hover:bg-dark-700 cursor-pointer">
+                            <input type="radio" name="primaryDisability" value="multiple" required class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500">
+                            <div>
+                                <span class="text-white font-medium">Multiple Disabilities</span>
+                                <p class="text-gray-400 text-sm">Combination of disabilities</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Severity Level -->
+                <div>
+                    <label for="severityLevel" class="block text-sm font-medium text-gray-300 mb-2">Severity Level *</label>
+                    <select id="severityLevel" required 
+                            class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white">
+                        <option value="">Select Severity</option>
+                        <option value="mild">Mild (40-59% disability)</option>
+                        <option value="moderate">Moderate (60-79% disability)</option>
+                        <option value="severe">Severe (80-100% disability)</option>
+                        <option value="profound">Profound (Complete disability)</option>
+                    </select>
+                </div>
+
+                <!-- Grade & State -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="gradeLevel" class="block text-sm font-medium text-gray-300 mb-2">Current Education Level *</label>
+                        <select id="gradeLevel" required 
+                                class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white">
+                            <option value="">Select Level</option>
+                            <option value="1-5">Primary Education (Class 1-5)</option>
+                            <option value="6-8">Upper Primary (Class 6-8)</option>
+                            <option value="9-10">Secondary (Class 9-10)</option>
+                            <option value="11-12">Higher Secondary (Class 11-12)</option>
+                            <option value="undergraduate">Undergraduate Degree</option>
+                            <option value="postgraduate">Postgraduate Degree</option>
+                            <option value="vocational">Vocational Training</option>
+                            <option value="skill-development">Skill Development Programs</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="stateLocation" class="block text-sm font-medium text-gray-300 mb-2">State/UT *</label>
+                        <select id="stateLocation" required 
+                                class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white">
+                            <option value="">Select State</option>
+                            <option value="andhra-pradesh">Andhra Pradesh</option>
+                            <option value="karnataka">Karnataka</option>
+                            <option value="kerala">Kerala</option>
+                            <option value="tamil-nadu">Tamil Nadu</option>
+                            <option value="telangana">Telangana</option>
+                            <option value="maharashtra">Maharashtra</option>
+                            <option value="gujarat">Gujarat</option>
+                            <option value="rajasthan">Rajasthan</option>
+                            <option value="uttar-pradesh">Uttar Pradesh</option>
+                            <option value="west-bengal">West Bengal</option>
+                            <option value="bihar">Bihar</option>
+                            <option value="odisha">Odisha</option>
+                            <option value="madhya-pradesh">Madhya Pradesh</option>
+                            <option value="punjab">Punjab</option>
+                            <option value="haryana">Haryana</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="others">Other States/UTs</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Family Income & Category -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="familyIncome" class="block text-sm font-medium text-gray-300 mb-2">Annual Family Income *</label>
+                        <select id="familyIncome" required 
+                                class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white">
+                            <option value="">Select Income Range</option>
+                            <option value="below-50000">Below ₹50,000</option>
+                            <option value="50000-1lakh">₹50,000 - ₹1 Lakh</option>
+                            <option value="1-2lakh">₹1-2 Lakh</option>
+                            <option value="2-5lakh">₹2-5 Lakh</option>
+                            <option value="5-8lakh">₹5-8 Lakh</option>
+                            <option value="above-8lakh">Above ₹8 Lakh</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-300 mb-2">Social Category</label>
+                        <select id="category" 
+                                class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white">
+                            <option value="">Select Category</option>
+                            <option value="general">General</option>
+                            <option value="obc">OBC (Other Backward Classes)</option>
+                            <option value="sc">SC (Scheduled Caste)</option>
+                            <option value="st">ST (Scheduled Tribe)</option>
+                            <option value="ews">EWS (Economically Weaker Sections)</option>
+                            <option value="minority">Minority</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Assistive Technology Needs -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Required Assistive Technologies/Support</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="assistiveTech" value="screen-reader" class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500 rounded">
+                            <span class="text-sm text-gray-300">Screen Reader (JAWS/NVDA)</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="assistiveTech" value="braille" class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500 rounded">
+                            <span class="text-sm text-gray-300">Braille Support</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="assistiveTech" value="sign-language" class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500 rounded">
+                            <span class="text-sm text-gray-300">Sign Language Interpreter</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="assistiveTech" value="wheelchair" class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500 rounded">
+                            <span class="text-sm text-gray-300">Wheelchair Access</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="assistiveTech" value="hearing-aid" class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500 rounded">
+                            <span class="text-sm text-gray-300">Hearing Aids/FM System</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="assistiveTech" value="speech-device" class="w-4 h-4 text-blue-600 bg-dark-600 border-dark-500 rounded">
+                            <span class="text-sm text-gray-300">Speech Generating Device</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Field of Interest -->
+                <div>
+                    <label for="fieldOfStudy" class="block text-sm font-medium text-gray-300 mb-2">Field of Study/Career Interest</label>
+                    <select id="fieldOfStudy" 
+                            class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white">
+                        <option value="">Select Field</option>
+                        <option value="special-education">Special Education</option>
+                        <option value="technology">Computer Science & Technology</option>
+                        <option value="arts-music">Arts & Music</option>
+                        <option value="social-work">Social Work & Counseling</option>
+                        <option value="commerce">Commerce & Accounting</option>
+                        <option value="vocational">Vocational Skills</option>
+                        <option value="sports">Adaptive Sports</option>
+                        <option value="entrepreneurship">Entrepreneurship</option>
+                        <option value="rehabilitation">Rehabilitation Services</option>
+                        <option value="others">Other Fields</option>
+                    </select>
+                </div>
+                
+                <!-- Specific Challenges -->
+                <div>
+                    <label for="specificChallenges" class="block text-sm font-medium text-gray-300 mb-2">Specific Challenges & Requirements</label>
+                    <textarea id="specificChallenges" rows="4" 
+                              class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400"
+                              placeholder="Describe specific challenges, accessibility needs, support requirements, achievements, or any other relevant information..."></textarea>
+                </div>
+                
+                <!-- Voice Input Section -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-medium text-gray-300">Voice Input for Requirements:</label>
+                    <div class="flex space-x-4">
+                        <button type="button" id="startVoiceInput" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            Start Recording
+                        </button>
+                        <button type="button" id="stopVoiceInput" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors hidden">
+                            Stop Recording
+                        </button>
+                    </div>
+                    <div id="voiceStatus" class="text-sm text-gray-400"></div>
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-lg">
+                    Find Disability-Specific Support & Scholarships
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="disabilityResults" class="hidden bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mt-6 accessibility-font-size">
+            <h3 class="text-lg font-semibold text-white mb-4 accessibility-font-size">Disability-Specific Support & Resources</h3>
+            
+            <!-- Student Profile Summary -->
+            <div id="profileSummary" class="mb-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                <h4 class="text-blue-400 font-medium mb-2">Disability Profile Summary</h4>
+                <div id="profileDetails" class="text-gray-300 text-sm"></div>
+            </div>
+            
+            <!-- Disability-Specific Scholarships -->
+            <div id="disabilityScholarships" class="mb-6">
+                <h4 class="text-green-400 font-medium mb-3">Disability-Specific Scholarships</h4>
+                <div id="scholarshipList" class="space-y-4"></div>
+            </div>
+            
+            <!-- Assistive Technology Support -->
+            <div id="assistiveTechSupport" class="mb-6">
+                <h4 class="text-purple-400 font-medium mb-3">Assistive Technology & Equipment</h4>
+                <div id="techSupportList" class="space-y-4"></div>
+            </div>
+            
+            <!-- Accessible Institutions -->
+            <div id="accessibleInstitutions" class="mb-6">
+                <h4 class="text-yellow-400 font-medium mb-3">Accessible Educational Institutions</h4>
+                <div id="institutionList" class="space-y-4"></div>
+            </div>
+            
+            <!-- Government Schemes for Disabled -->
+            <div id="disabilitySchemes" class="mb-6">
+                <h4 class="text-red-400 font-medium mb-3">Government Disability Schemes</h4>
+                <div id="schemesList" class="space-y-4"></div>
+            </div>
+            
+            <!-- NGO & Support Organizations -->
+            <div id="supportOrganizations" class="mb-6">
+                <h4 class="text-orange-400 font-medium mb-3">NGOs & Support Organizations</h4>
+                <div id="ngoList" class="space-y-4"></div>
+            </div>
+            
+            <!-- Skill Development Programs -->
+            <div id="skillDevelopment" class="mb-6">
+                <h4 class="text-indigo-400 font-medium mb-3">Skill Development & Employment</h4>
+                <div id="skillList" class="space-y-4"></div>
+            </div>
+            
+            <!-- Action Plan -->
+            <div id="actionPlan" class="p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-lg">
+                <h4 class="text-indigo-400 font-medium mb-2">Personalized Action Plan</h4>
+                <div id="actionSteps" class="text-gray-300"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Voice input functionality for disabled students
+let voiceRecorder;
+let voiceChunks = [];
+let recording = false;
+let stream = null;
+
+document.getElementById('startVoiceInput').addEventListener('click', async function() {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+        document.getElementById('voiceStatus').textContent = 'Voice recording not supported in this browser.';
+        return;
+    }
+    if (!recording) {
+        // Start recording
+        document.getElementById('voiceStatus').textContent = 'Recording... Click again to stop.';
+        this.disabled = false;
+        voiceChunks = [];
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            voiceRecorder = new MediaRecorder(stream);
+            voiceRecorder.ondataavailable = e => voiceChunks.push(e.data);
+            voiceRecorder.onstop = async () => {
+                document.getElementById('voiceStatus').textContent = 'Transcribing...';
+                const audioBlob = new Blob(voiceChunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'disability_voice.webm');
+                try {
+                    const res = await fetch('/speech-to-text', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.text) {
+                        document.getElementById('specificChallenges').value = data.text;
+                        document.getElementById('voiceStatus').textContent = 'Transcription complete!';
+                    } else {
+                        document.getElementById('voiceStatus').textContent = 'Could not transcribe audio.';
+                        console.error('Speech-to-text error:', data.error || data);
+                    }
+                } catch (err) {
+                    document.getElementById('voiceStatus').textContent = 'Error: ' + err.message;
+                    console.error('Speech-to-text fetch error:', err);
+                }
+                setTimeout(() => { document.getElementById('voiceStatus').textContent = ''; }, 2000);
+                this.disabled = false;
+                recording = false;
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+            };
+            voiceRecorder.start();
+            recording = true;
+            this.textContent = 'Stop Recording';
+        } catch (err) {
+            document.getElementById('voiceStatus').textContent = 'Microphone access denied.';
+            this.disabled = false;
+            recording = false;
+            console.error('Microphone access denied:', err);
+        }
+    } else {
+        // Stop recording
+        if (voiceRecorder && voiceRecorder.state === 'recording') {
+            voiceRecorder.stop();
+            document.getElementById('voiceStatus').textContent = 'Processing...';
+            this.textContent = '';
+            setTimeout(() => {
+                this.innerHTML = 'Start Recording';
+            }, 2000);
+        }
+        recording = false;
+    }
+});
+
+// Disability form submission
+document.getElementById('disabilityForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Prevent form refresh
+    
+    const formData = {
+        primaryDisability: document.querySelector('input[name="primaryDisability"]:checked')?.value,
+        severityLevel: document.getElementById('severityLevel').value,
+        gradeLevel: document.getElementById('gradeLevel').value,
+        stateLocation: document.getElementById('stateLocation').value,
+        familyIncome: document.getElementById('familyIncome').value,
+        category: document.getElementById('category').value,
+        fieldOfStudy: document.getElementById('fieldOfStudy').value,
+        specificChallenges: document.getElementById('specificChallenges').value,
+        assistiveTech: []
+    };
+    
+    // Collect assistive technology needs
+    document.querySelectorAll('input[name="assistiveTech"]:checked').forEach(cb => {
+        formData.assistiveTech.push(cb.value);
+    });
+    
+    // Validation
+    if (!formData.primaryDisability || !formData.severityLevel || !formData.gradeLevel || !formData.stateLocation || !formData.familyIncome) {
+        alert('Please fill in all required fields (marked with *).');
+        return;
+    }
+    
+    const resultsDiv = document.getElementById('disabilityResults');
+    const profileDetails = document.getElementById('profileDetails');
+    const scholarshipList = document.getElementById('scholarshipList');
+    const techSupportList = document.getElementById('techSupportList');
+    const institutionList = document.getElementById('institutionList');
+    const schemesList = document.getElementById('schemesList');
+    const ngoList = document.getElementById('ngoList');
+    const skillList = document.getElementById('skillList');
+    const actionSteps = document.getElementById('actionSteps');
+    
+    // Show loading immediately
+    resultsDiv.classList.remove('hidden');
+    profileDetails.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-blue-500 rounded-full animate-bounce"></div><span>Analyzing disability profile...</span></div>';
+    scholarshipList.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-green-500 rounded-full animate-bounce"></div><span>Searching for disability-specific scholarships...</span></div>';
+    techSupportList.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-purple-500 rounded-full animate-bounce"></div><span>Finding assistive technology resources...</span></div>';
+    institutionList.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-yellow-500 rounded-full animate-bounce"></div><span>Locating accessible institutions...</span></div>';
+    schemesList.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-red-500 rounded-full animate-bounce"></div><span>Retrieving government schemes...</span></div>';
+    ngoList.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-orange-500 rounded-full animate-bounce"></div><span>Finding support organizations...</span></div>';
+    skillList.innerHTML = '<div class="animate-pulse flex items-center space-x-2"><div class="w-4 h-4 bg-indigo-500 rounded-full animate-bounce"></div><span>Searching skill development programs...</span></div>';
+    
+    try {
+        // Try the backend route first, if it fails, show mock data
+        let data;
+        try {
+            const response = await fetch('/disability-support-analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (response.ok) {
+                data = await response.json();
+            } else {
+                throw new Error('Backend route not available');
+            }
+        } catch (backendError) {
+            console.log('Backend not available, using mock data');
+            // Generate mock data based on form inputs
+            data = generateMockDisabilityData(formData);
+        }
+        
+        if (data.success) {
+            // Display profile summary
+            profileDetails.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div><strong>Primary Disability:</strong> ${getDisabilityDisplayName(formData.primaryDisability)}</div>
+                    <div><strong>Severity:</strong> ${formData.severityLevel}</div>
+                    <div><strong>Education Level:</strong> ${formData.gradeLevel}</div>
+                    <div><strong>State:</strong> ${formData.stateLocation}</div>
+                    <div><strong>Family Income:</strong> ${formData.familyIncome}</div>
+                    <div><strong>Category:</strong> ${formData.category || 'Not specified'}</div>
+                    ${formData.assistiveTech.length > 0 ? `<div class="col-span-2"><strong>Assistive Tech Needs:</strong> ${formData.assistiveTech.join(', ')}</div>` : ''}
+                </div>
+            `;
+            
+            // Display disability-specific scholarships
+            if (data.scholarships && data.scholarships.length > 0) {
+                scholarshipList.innerHTML = data.scholarships.map(scholarship => `
+                    <div class="p-4 bg-green-900/10 border border-green-500/20 rounded-lg">
+                        <h5 class="font-medium text-green-300 mb-2">${scholarship.name}</h5>
+                        <p class="text-gray-400 text-sm mb-2">${scholarship.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-green-600/20 text-green-300 text-xs rounded">Amount: ${scholarship.amount}</span>
+                            <span class="px-2 py-1 bg-blue-600/20 text-blue-300 text-xs rounded">Eligibility: ${scholarship.eligibility}</span>
+                            ${scholarship.deadline ? `<span class="px-2 py-1 bg-red-600/20 text-red-300 text-xs rounded">Deadline: ${scholarship.deadline}</span>` : ''}
+                        </div>
+                        ${scholarship.link ? `<a href="${scholarship.link}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm">Apply Here →</a>` : ''}
+                    </div>
+                `).join('');
+            } else {
+                scholarshipList.innerHTML = '<p class="text-gray-400">No specific scholarships found. Please check government portals regularly for updates.</p>';
+            }
+            
+            // Display assistive technology support
+            if (data.assistiveTech && data.assistiveTech.length > 0) {
+                techSupportList.innerHTML = data.assistiveTech.map(tech => `
+                    <div class="p-4 bg-purple-900/10 border border-purple-500/20 rounded-lg">
+                        <h5 class="font-medium text-purple-300 mb-2">${tech.name}</h5>
+                        <p class="text-gray-400 text-sm mb-2">${tech.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-purple-600/20 text-purple-300 text-xs rounded">Cost: ${tech.cost}</span>
+                            <span class="px-2 py-1 bg-blue-600/20 text-blue-300 text-xs rounded">Funding: ${tech.funding}</span>
+                        </div>
+                        ${tech.link ? `<a href="${tech.link}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm">Get Support →</a>` : ''}
+                    </div>
+                `).join('');
+            }
+            
+            // Display accessible institutions
+            if (data.institutions && data.institutions.length > 0) {
+                institutionList.innerHTML = data.institutions.map(inst => `
+                    <div class="p-4 bg-yellow-900/10 border border-yellow-500/20 rounded-lg">
+                        <h5 class="font-medium text-yellow-300 mb-2">${inst.name}</h5>
+                        <p class="text-gray-400 text-sm mb-2">${inst.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-yellow-600/20 text-yellow-300 text-xs rounded">Location: ${inst.location}</span>
+                            <span class="px-2 py-1 bg-green-600/20 text-green-300 text-xs rounded">Accessibility: ${inst.accessibility}</span>
+                        </div>
+                        ${inst.link ? `<a href="${inst.link}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm">Visit Website →</a>` : ''}
+                    </div>
+                `).join('');
+            }
+            
+            // Display government schemes
+            if (data.schemes && data.schemes.length > 0) {
+                schemesList.innerHTML = data.schemes.map(scheme => `
+                    <div class="p-4 bg-red-900/10 border border-red-500/20 rounded-lg">
+                        <h5 class="font-medium text-red-300 mb-2">${scheme.name}</h5>
+                        <p class="text-gray-400 text-sm mb-2">${scheme.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-red-600/20 text-red-300 text-xs rounded">Ministry: ${scheme.ministry}</span>
+                            <span class="px-2 py-1 bg-blue-600/20 text-blue-300 text-xs rounded">Benefits: ${scheme.benefits}</span>
+                        </div>
+                        ${scheme.link ? `<a href="${scheme.link}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm">Apply Online →</a>` : ''}
+                    </div>
+                `).join('');
+            }
+            
+            // Display NGOs and support organizations
+            if (data.ngos && data.ngos.length > 0) {
+                ngoList.innerHTML = data.ngos.map(ngo => `
+                    <div class="p-4 bg-orange-900/10 border border-orange-500/20 rounded-lg">
+                        <h5 class="font-medium text-orange-300 mb-2">${ngo.name}</h5>
+                        <p class="text-gray-400 text-sm mb-2">${ngo.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-orange-600/20 text-orange-300 text-xs rounded">Focus: ${ngo.focus}</span>
+                            <span class="px-2 py-1 bg-green-600/20 text-green-300 text-xs rounded">Services: ${ngo.services}</span>
+                        </div>
+                        ${ngo.link ? `<a href="${ngo.link}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm">Contact NGO →</a>` : ''}
+                    </div>
+                `).join('');
+            }
+            
+            // Display skill development programs
+            if (data.skillPrograms && data.skillPrograms.length > 0) {
+                skillList.innerHTML = data.skillPrograms.map(skill => `
+                    <div class="p-4 bg-indigo-900/10 border border-indigo-500/20 rounded-lg">
+                        <h5 class="font-medium text-indigo-300 mb-2">${skill.name}</h5>
+                        <p class="text-gray-400 text-sm mb-2">${skill.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-indigo-600/20 text-indigo-300 text-xs rounded">Duration: ${skill.duration}</span>
+                            <span class="px-2 py-1 bg-green-600/20 text-green-300 text-xs rounded">Employment: ${skill.employment}</span>
+                        </div>
+                        ${skill.link ? `<a href="${skill.link}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm">Enroll Now →</a>` : ''}
+                    </div>
+                `).join('');
+            }
+            
+            // Display action plan
+            if (data.actionPlan) {
+                actionSteps.innerHTML = `
+                    <div class="space-y-3">
+                        <h5 class="font-medium text-indigo-300">Immediate Steps:</h5>
+                        <ol class="list-decimal ml-4 space-y-2 text-sm">
+                            ${data.actionPlan.immediate.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                        
+                        <h5 class="font-medium text-indigo-300 mt-4">Long-term Goals:</h5>
+                        <ol class="list-decimal ml-4 space-y-2 text-sm">
+                            ${data.actionPlan.longTerm.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                        
+                        <div class="mt-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded">
+                            <p class="text-blue-300 text-sm"><strong>Emergency Contacts:</strong></p>
+                            <p class="text-gray-300 text-sm">${data.actionPlan.contacts}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+        } else {
+            alert('Error: ' + (data.error || 'Failed to analyze disability profile'));
+        }
+    } catch (error) {
+        console.error('Disability analysis error:', error);
+        // Show error message but don't alert
+        profileDetails.innerHTML = '<div class="text-red-400">Error analyzing profile. Please try again.</div>';
+    }
+});
+
+// Helper function to get display name for disability
+function getDisabilityDisplayName(disability) {
+    const names = {
+        'visual': 'Visual Impairment',
+        'hearing': 'Hearing Impairment', 
+        'speech': 'Speech Impairment',
+        'physical': 'Physical Disability',
+        'intellectual': 'Intellectual Disability',
+        'multiple': 'Multiple Disabilities'
+    };
+    return names[disability] || disability;
+}
+
+// Mock data generator function
+function generateMockDisabilityData(formData) {
+    return {
+        success: true,
+        scholarships: [
+            {
+                name: "National Scholarship for Persons with Disabilities",
+                description: "Central government scholarship for students with disabilities pursuing higher education",
+                amount: "Rs.1,000-Rs.3,000/month",
+                eligibility: "40% disability certificate required",
+                deadline: "Last date varies by state",
+                link: "https://scholarships.gov.in/"
+            },
+            {
+                name: "Prime Minister's Research Fellowship (PWD)",
+                description: "Research fellowship specifically reserved for persons with disabilities",
+                amount: "Rs.70,000/month for PhD",
+                eligibility: "Minimum 40% disability, GATE qualified",
+                deadline: "Check official website",
+                link: "https://www.pmrf.in/"
+            },
+            {
+                name: "State Disability Welfare Scholarship",
+                description: `Scholarship provided by ${formData.stateLocation} state government for disabled students`,
+                amount: "Rs.500-Rs.2,000/month",
+                eligibility: "State domicile with disability certificate",
+                deadline: "Usually August-September",
+                link: "https://www.scholarships.gov.in/"
+            }
+        ],
+        assistiveTech: [
+            {
+                name: "DAISY Books and Screen Readers",
+                description: "Digital accessible information system books and screen reading software",
+                cost: "Free to subsidized",
+                funding: "Government schemes available",
+                link: "https://www.enableindia.org/"
+            },
+            {
+                name: "Hearing Aids and Cochlear Implants",
+                description: "Subsidized hearing aids and cochlear implant support through ADIP scheme",
+                cost: "90% subsidized",
+                funding: "ADIP (Assistance to Disabled Persons)",
+                link: "https://www.adip.nic.in/"
+            }
+        ],
+        institutions: [
+            {
+                name: "National Institute for Visually Handicapped",
+                description: "Premier institution for education and rehabilitation of visually impaired",
+                location: "Dehradun, Uttarakhand",
+                accessibility: "100% accessible campus",
+                link: "https://www.nivh.gov.in/"
+            },
+            {
+                name: "Ali Yavar Jung National Institute of Speech and Hearing Disabilities",
+                description: "Specialized institute for speech and hearing disabled persons",
+                location: "Mumbai, Maharashtra",
+                accessibility: "Specialized facilities",
+                link: "https://www.ayjnihd.nic.in/"
+            }
+        ],
+        schemes: [
+            {
+                name: "Assistance to Disabled Persons (ADIP)",
+                description: "Scheme providing aids and appliances to persons with disabilities",
+                ministry: "Ministry of Social Justice & Empowerment",
+                benefits: "90% cost coverage for aids",
+                link: "https://www.adip.nic.in/"
+            },
+            {
+                name: "Accessible India Campaign",
+                description: "Making public spaces and transport accessible for disabled persons",
+                ministry: "Ministry of Social Justice & Empowerment",
+                benefits: "Barrier-free environment",
+                link: "https://www.accessibleindia.gov.in/"
+            }
+        ],
+        ngos: [
+            {
+                name: "Enable India",
+                description: "Empowering persons with disabilities through skill development and employment",
+                focus: "Employment and skill development",
+                services: "Job placement, training",
+                link: "https://www.enableindia.org/"
+            },
+            {
+                name: "National Association for the Blind",
+                description: "Comprehensive services for visually impaired persons",
+                focus: "Visual impairment support",  
+                services: "Education, rehabilitation, employment",
+                link: "https://www.nabindia.org/"
+            }
+        ],
+        skillPrograms: [
+            {
+                name: "Digital Accessibility Training Program",
+                description: "Training in accessible web development and digital skills",
+                duration: "6 months",
+                employment: "90% job placement rate",
+                link: "https://www.enableindia.org/courses"
+            },
+            {
+                name: "Inclusive Business Process Outsourcing", 
+                description: "BPO training specifically designed for persons with disabilities",
+                duration: "3-4 months",
+                employment: "Direct placement opportunities",
+                link: "https://www.nsdc.gov.in/"
+            }
+        ],
+        actionPlan: {
+            immediate: [
+                "Apply for disability certificate if not available",
+                "Register on National Scholarship Portal (scholarships.gov.in)",
+                "Contact local disability welfare officer",
+                "Apply for relevant assistive technology through ADIP scheme",
+                "Connect with nearest specialized institution"
+            ],
+            longTerm: [
+                "Complete education with necessary accommodations",
+                "Enroll in skill development programs",
+                "Apply for competitive exams with disability quotas",
+                "Network with disability employment organizations",
+                "Consider entrepreneurship opportunities with government support"
+            ],
+            contacts: "National Disability Helpline: 1800-233-5956, State Disability Commissioner, Local NGOs"
+        }
+    };
+}
+</script>
+{% endblock %} 

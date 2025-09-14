@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+button {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid rgb(61, 106, 255);
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+button:hover {
+  background: rgb(61, 106, 255);
+  box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+button:active {
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: box-shadow 0.2s ease-in;
+  -moz-transition: box-shadow 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+  <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700 max-w-xl mx-auto">
+    <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6 flex items-center space-x-4">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+        <span class="text-3xl">📚</span>
+      </div>
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold text-white mb-1">NEP Compliance Checker</h1>
+        <p class="text-gray-300">Check if your lesson or activity aligns with NEP guidelines.</p>
+      </div>
+    </div>
+    <form id="nep-form" class="space-y-4">
+      <div>
+        <label for="nep-lesson" class="block text-sm font-medium text-gray-300 mb-2">Lesson or Activity</label>
+        <textarea id="nep-lesson" rows="4" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-dark-700 text-white placeholder-gray-400" placeholder="Describe your lesson or activity..."></textarea>
+      </div>
+      <button type="submit">Check NEP Compliance</button>
+    </form>
+    <div id="nep-result" class="mt-6 text-sm text-gray-200 bg-dark-700 p-4 rounded-lg border-l-4 border-blue-500 leading-relaxed min-h-[2rem]"></div>
+  </div>
+</div>
+<script>
+document.getElementById('nep-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const content = document.getElementById('nep-lesson').value;
+  const response = await fetch('/nep/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) });
+  const data = await response.json();
+  document.getElementById('nep-result').innerText = data.success ? (data.compliance || data.suggestions) : (data.error || data.message);
+});
+</script>
+{% endblock %} 

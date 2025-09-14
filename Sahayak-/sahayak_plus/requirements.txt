@@ -1,0 +1,13 @@
+Flask
+requests
+python-dotenv
+google-generativeai
+Pillow
+reportlab
+
+# Eye tracking dependencies
+opencv-python
+mediapipe
+pyautogui
+websockets
+asyncio

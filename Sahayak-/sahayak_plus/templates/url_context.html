@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-xl mx-auto py-8">
+  <h1 class="text-2xl font-bold text-center mb-4">🔗 URL Context Tool</h1>
+  <form id="url-context-form">
+    <input id="url-context-input" class="w-full p-2 rounded mb-2" placeholder="Paste a web link (URL)">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Summarize Link</button>
+  </form>
+  <div id="url-context-result" class="mt-2 text-xs text-gray-300"></div>
+</div>
+<script>
+document.getElementById('url-context-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const url = document.getElementById('url-context-input').value;
+  const response = await fetch('/gemini/url-context', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+  const data = await response.json();
+  document.getElementById('url-context-result').innerText = data.success ? data.summary : (data.error || data.message);
+});
+</script>
+{% endblock %} 

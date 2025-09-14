@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Language Translator{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-900 py-8">
+    <div class="max-w-6xl mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white mb-4">Real-Time Sign Language Translator</h1>
+            <p class="text-gray-400 mb-6">Convert speech to sign language in real-time with AI-powered translation</p>
+        </div>
+
+        <!-- Language Selection -->
+        <div class="bg-dark-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Select Language</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <button class="language-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors" data-language="asl">
+                    ASL (English)
+                </button>
+                <button class="language-btn bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-colors" data-language="isl">
+                    ISL
+                </button>
+                <button class="language-btn bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg transition-colors" data-language="hindi">
+                    Hindi
+                </button>
+                <button class="language-btn bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors" data-language="telugu">
+                    Telugu
+                </button>
+                <button class="language-btn bg-pink-600 hover:bg-pink-700 text-white px-4 py-3 rounded-lg transition-colors" data-language="gujarati">
+                    Gujarati
+                </button>
+            </div>
+            <div id="language-status" class="mt-4 text-sm text-gray-400"></div>
+        </div>
+
+        <!-- Main Interface -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Controls Panel -->
+            <div class="bg-dark-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Voice Recognition</h2>
+                
+                <!-- Recording Controls -->
+                <div class="flex flex-col space-y-4 mb-6">
+                    <button id="start-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:opacity-50">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Start Recording</span>
+                    </button>
+                    
+                    <button id="stop-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:opacity-50" disabled>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Stop Recording</span>
+                    </button>
+                </div>
+
+                <!-- Text Input Alternative -->
+                <div class="border-t border-gray-700 pt-4">
+                    <h3 class="text-lg font-medium text-white mb-2">Or Type Text</h3>
+                    <div class="flex space-x-2">
+                        <input type="text" id="text-input" placeholder="Type text to translate..." 
+                               class="flex-1 bg-dark-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none">
+                        <button id="translate-text-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            Translate
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recognition Status -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-medium text-white mb-2">Recognition Status</h3>
+                    <div id="status-display" class="bg-dark-700 rounded-lg p-4 min-h-[100px]">
+                        <div id="partial-text" class="text-gray-400 italic mb-2"></div>
+                        <div id="recognized-text" class="text-white font-medium"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Display Panel -->
+            <div class="bg-dark-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Sign Language Display</h2>
+                
+                <!-- Video Container -->
+                <div id="video-container" class="bg-dark-700 rounded-lg p-4 min-h-[300px] flex items-center justify-center">
+                    <div class="text-center text-gray-400">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
+                        </svg>
+                        <p>Select a language and start speaking to see sign language translation</p>
+                    </div>
+                </div>
+
+                <!-- Video Controls -->
+                <div class="flex justify-center space-x-4 mt-4">
+                    <button id="replay-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50" disabled>
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                        </svg>
+                        Replay
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="bg-dark-800 rounded-lg p-6 mt-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Feedback & Correction</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Original Text</label>
+                    <input type="text" id="feedback-original" readonly 
+                           class="w-full bg-dark-700 text-white px-4 py-2 rounded-lg border border-gray-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Correction</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="feedback-correction" placeholder="Enter correction..." 
+                               class="flex-1 bg-dark-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none">
+                        <button id="submit-feedback-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+class SignLanguageTranslator {
+    constructor() {
+        this.currentLanguage = null;
+        this.isRecording = false;
+        this.eventSource = null;
+        this.currentVideos = [];
+        this.currentVideoIndex = 0;
+        
+        this.initializeElements();
+        this.attachEventListeners();
+    }
+    
+    initializeElements() {
+        this.startBtn = document.getElementById('start-btn');
+        this.stopBtn = document.getElementById('stop-btn');
+        this.translateTextBtn = document.getElementById('translate-text-btn');
+        this.textInput = document.getElementById('text-input');
+        this.statusDisplay = document.getElementById('status-display');
+        this.partialText = document.getElementById('partial-text');
+        this.recognizedText = document.getElementById('recognized-text');
+        this.videoContainer = document.getElementById('video-container');
+        this.languageStatus = document.getElementById('language-status');
+        this.replayBtn = document.getElementById('replay-btn');
+        this.feedbackOriginal = document.getElementById('feedback-original');
+        this.feedbackCorrection = document.getElementById('feedback-correction');
+        this.submitFeedbackBtn = document.getElementById('submit-feedback-btn');
+    }
+    
+    attachEventListeners() {
+        // Language selection
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.selectLanguage(e.target.dataset.language));
+        });
+        
+        // Recording controls
+        this.startBtn.addEventListener('click', () => this.startRecording());
+        this.stopBtn.addEventListener('click', () => this.stopRecording());
+        
+        // Text translation
+        this.translateTextBtn.addEventListener('click', () => this.translateText());
+        this.textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.translateText();
+        });
+        
+        // Replay
+        this.replayBtn.addEventListener('click', () => this.replayVideos());
+        
+        // Feedback
+        this.submitFeedbackBtn.addEventListener('click', () => this.submitFeedback());
+    }
+    
+    async selectLanguage(language) {
+        try {
+            this.showStatus('Selecting language...', 'info');
+            
+            const response = await fetch('/sign-language/select-language', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ language })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                this.currentLanguage = language;
+                this.updateLanguageUI(language);
+                this.showStatus(`${language.toUpperCase()} selected successfully`, 'success');
+            } else {
+                this.showStatus(`Error: ${data.error}`, 'error');
+            }
+        } catch (error) {
+            this.showStatus(`Network error: ${error.message}`, 'error');
+        }
+    }
+    
+    updateLanguageUI(language) {
+        // Update button states
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.classList.remove('ring-2', 'ring-white');
+            if (btn.dataset.language === language) {
+                btn.classList.add('ring-2', 'ring-white');
+            }
+        });
+        
+        // Enable controls
+        this.startBtn.disabled = false;
+        this.translateTextBtn.disabled = false;
+        
+        this.languageStatus.textContent = `Selected: ${language.toUpperCase()}`;
+    }
+    
+    async startRecording() {
+        if (!this.currentLanguage) {
+            this.showStatus('Please select a language first', 'error');
+            return;
+        }
+        
+        try {
+            this.isRecording = true;
+            this.startBtn.disabled = true;
+            this.stopBtn.disabled = false;
+            
+            this.showStatus('Starting recording...', 'info');
+            
+            // Start SSE connection
+            this.eventSource = new EventSource('/sign-language/start-stream');
+            
+            this.eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                this.handleStreamData(data);
+            };
+            
+            this.eventSource.onerror = (error) => {
+                console.error('SSE error:', error);
+                this.stopRecording();
+                this.showStatus('Recording error occurred', 'error');
+            };
+            
+        } catch (error) {
+            this.showStatus(`Error starting recording: ${error.message}`, 'error');
+            this.stopRecording();
+        }
+    }
+    
+    stopRecording() {
+        this.isRecording = false;
+        this.startBtn.disabled = false;
+        this.stopBtn.disabled = true;
+        
+        if (this.eventSource) {
+            this.eventSource.close();
+            this.eventSource = null;
+        }
+        
+        fetch('/sign-language/stop-stream', { method: 'POST' });
+        this.showStatus('Recording stopped', 'info');
+    }
+    
+    handleStreamData(data) {
+        if (data.error) {
+            this.showStatus(`Error: ${data.error}`, 'error');
+            return;
+        }
+        
+        if (data.partial) {
+            this.partialText.textContent = `Listening: ${data.partial}`;
+        }
+        
+        if (data.text && data.is_word) {
+            this.recognizedText.textContent = data.text;
+            this.feedbackOriginal.value = data.text;
+            this.translateWord(data.text);
+        }
+        
+        if (data.is_full) {
+            this.recognizedText.textContent = data.text;
+            this.partialText.textContent = '';
+        }
+    }
+    
+    async translateText() {
+        const text = this.textInput.value.trim();
+        if (!text) return;
+        
+        if (!this.currentLanguage) {
+            this.showStatus('Please select a language first', 'error');
+            return;
+        }
+        
+        this.recognizedText.textContent = text;
+        this.feedbackOriginal.value = text;
+        await this.translateWord(text);
+    }
+    
+    async translateWord(text) {
+        try {
+            this.showStatus('Translating...', 'info');
+            
+            const response = await fetch('/sign-language/translate-text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    text: text, 
+                    language: this.currentLanguage 
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.video_paths) {
+                this.currentVideos = data.video_paths;
+                this.currentVideoIndex = 0;
+                this.playVideos();
+                this.replayBtn.disabled = false;
+                this.showStatus('Translation complete', 'success');
+            } else {
+                this.showStatus(`Translation error: ${data.error || 'Unknown error'}`, 'error');
+            }
+        } catch (error) {
+            this.showStatus(`Translation error: ${error.message}`, 'error');
+        }
+    }
+    
+    playVideos() {
+        if (this.currentVideos.length === 0) return;
+        
+        this.currentVideoIndex = 0;
+        this.playNextVideo();
+    }
+    
+    playNextVideo() {
+        if (this.currentVideoIndex >= this.currentVideos.length) {
+            return;
+        }
+        
+        const videoPath = this.currentVideos[this.currentVideoIndex];
+        const mediaUrl = `/sign-language/media/${videoPath}`;
+        
+        if (videoPath.endsWith('.mp4')) {
+            this.displayVideo(mediaUrl);
+        } else {
+            this.displayImage(mediaUrl);
+        }
+    }
+    
+    displayVideo(src) {
+        this.videoContainer.innerHTML = `
+            <video autoplay onended="translator.onMediaEnded()" class="w-full rounded-lg">
+                <source src="${src}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        `;
+    }
+    
+    displayImage(src) {
+        this.videoContainer.innerHTML = `
+            <img src="${src}" class="w-full rounded-lg" onload="translator.onImageLoaded()">
+        `;
+    }
+    
+    onMediaEnded() {
+        this.currentVideoIndex++;
+        setTimeout(() => this.playNextVideo(), 500);
+    }
+    
+    onImageLoaded() {
+        setTimeout(() => {
+            this.currentVideoIndex++;
+            this.playNextVideo();
+        }, 1500);
+    }
+    
+    replayVideos() {
+        this.playVideos();
+    }
+    
+    async submitFeedback() {
+        const original = this.feedbackOriginal.value.trim();
+        const correction = this.feedbackCorrection.value.trim();
+        
+        if (!original || !correction) {
+            this.showStatus('Please fill in both fields', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/sign-language/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ original, correction })
+            });
+            
+            const data = await response.json();
+            
+            if (data.status) {
+                this.showStatus('Feedback submitted successfully', 'success');
+                this.feedbackCorrection.value = '';
+            } else {
+                this.showStatus('Failed to submit feedback', 'error');
+            }
+        } catch (error) {
+            this.showStatus(`Feedback error: ${error.message}`, 'error');
+        }
+    }
+    
+    showStatus(message, type = 'info') {
+        const colors = {
+            info: 'text-blue-400',
+            success: 'text-green-400',
+            error: 'text-red-400'
+        };
+        
+        this.languageStatus.textContent = message;
+        this.languageStatus.className = `mt-4 text-sm ${colors[type]}`;
+    }
+}
+
+// Initialize when page loads
+let translator;
+document.addEventListener('DOMContentLoaded', () => {
+    translator = new SignLanguageTranslator();
+});
+</script>
+{% endblock %}

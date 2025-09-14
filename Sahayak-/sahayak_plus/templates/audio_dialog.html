@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Glassy effect for all main content cards and backgrounds */
+.bg-dark-800.rounded-xl,
+.bg-dark-800.rounded-lg,
+.bg-dark-800.p-8,
+.bg-dark-800.p-6,
+.bg-dark-800 {
+  background: rgba(30, 41, 59, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+</style>
+<div class="py-6 px-2 sm:px-4 md:px-8">
+    <div class="bg-dark-800 rounded-xl shadow-lg p-8 border border-dark-700">
+        <!-- Page Header -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-xl font-semibold text-white">Audio Dialog</h1>
+                    <p class="text-gray-300">Live audio-to-audio conversation with AI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Dialog Interface -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6">
+            <h2 class="text-lg font-semibold text-white mb-4">Voice Conversation</h2>
+            
+            <!-- Audio Controls -->
+            <div class="flex space-x-4 mb-6">
+                <button id="startAudioDialog" class="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                    </svg>
+                    <span>Start Audio Dialog</span>
+                </button>
+                <button id="stopAudioDialog" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center space-x-2 hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
+                    </svg>
+                    <span>Stop Dialog</span>
+                </button>
+            </div>
+
+            <!-- Status Display -->
+            <div id="audioStatus" class="text-center py-4">
+                <div class="text-gray-400">
+                    <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <p>Click "Start Audio Dialog" to begin voice conversation</p>
+                </div>
+            </div>
+
+            <!-- Conversation Log -->
+            <div class="bg-dark-700 rounded-lg p-4 max-h-64 overflow-y-auto">
+                <h3 class="text-sm font-medium text-gray-300 mb-3">Conversation Log</h3>
+                <div id="conversationLog" class="space-y-2 text-sm">
+                    <div class="text-gray-400 italic">No conversation yet...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="bg-dark-800 rounded-lg shadow-sm border border-dark-700 p-6 mt-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Audio Settings</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Language</label>
+                    <select id="audioLanguage" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-dark-700 text-white">
+                        <option value="en-US">English (US)</option>
+                        <option value="hi-IN">Hindi</option>
+                        <option value="te-IN">Telugu</option>
+                        <option value="kn-IN">Kannada</option>
+                        <option value="es-ES">Spanish</option>
+                        <option value="fr-FR">French</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Voice Speed</label>
+                    <select id="voiceSpeed" class="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-dark-700 text-white">
+                        <option value="0.8">Slow</option>
+                        <option value="1.0" selected>Normal</option>
+                        <option value="1.2">Fast</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let isDialogActive = false;
+let mediaRecorder;
+let audioChunks = [];
+
+document.getElementById('startAudioDialog').addEventListener('click', async function() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        
+        mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+        };
+        
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            await processAudioInput(audioBlob);
+        };
+        
+        // Start recording
+        mediaRecorder.start();
+        isDialogActive = true;
+        
+        // Update UI
+        this.classList.add('hidden');
+        document.getElementById('stopAudioDialog').classList.remove('hidden');
+        updateStatus('Recording... Speak now!', 'recording');
+        
+        // Auto-stop after 10 seconds
+        setTimeout(() => {
+            if (isDialogActive) {
+                stopAudioDialog();
+            }
+        }, 10000);
+        
+    } catch (error) {
+        console.error('Error accessing microphone:', error);
+        alert('Unable to access microphone. Please check permissions.');
+    }
+});
+
+document.getElementById('stopAudioDialog').addEventListener('click', stopAudioDialog);
+
+function stopAudioDialog() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        
+        isDialogActive = false;
+        
+        // Update UI
+        document.getElementById('startAudioDialog').classList.remove('hidden');
+        document.getElementById('stopAudioDialog').classList.add('hidden');
+        updateStatus('Processing audio...', 'processing');
+    }
+}
+
+async function processAudioInput(audioBlob) {
+    try {
+        const formData = new FormData();
+        formData.append('audio', audioBlob);
+        
+        // First convert speech to text
+        const sttResponse = await fetch('/speech-to-text', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const sttData = await sttResponse.json();
+        
+        if (sttData.text) {
+            // Add user message to log
+            addToConversationLog('You', sttData.text, 'user');
+            
+            // Get AI response
+            const aiResponse = await fetch('/gemini/audio-dialog', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: sttData.text })
+            });
+            
+            const aiData = await aiResponse.json();
+            
+            if (aiData.success) {
+                // Add AI response to log
+                addToConversationLog('AI', aiData.response, 'ai');
+                
+                // Speak the response
+                speakText(aiData.response);
+            }
+        }
+        
+        updateStatus('Ready for next input', 'ready');
+        
+    } catch (error) {
+        console.error('Error processing audio:', error);
+        updateStatus('Error processing audio', 'error');
+    }
+}
+
+function addToConversationLog(speaker, message, type) {
+    const log = document.getElementById('conversationLog');
+    const timestamp = new Date().toLocaleTimeString();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `p-2 rounded ${type === 'user' ? 'bg-blue-900/20 border border-blue-500/30' : 'bg-cyan-900/20 border border-cyan-500/30'}`;
+    messageDiv.innerHTML = `
+        <div class="flex justify-between items-start mb-1">
+            <span class="text-xs font-medium ${type === 'user' ? 'text-blue-400' : 'text-cyan-400'}">${speaker}</span>
+            <span class="text-xs text-gray-500">${timestamp}</span>
+        </div>
+        <p class="text-sm text-gray-300">${message}</p>
+    `;
+    
+    log.appendChild(messageDiv);
+    log.scrollTop = log.scrollHeight;
+}
+
+function speakText(text) {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = document.getElementById('audioLanguage').value;
+        utterance.rate = parseFloat(document.getElementById('voiceSpeed').value);
+        speechSynthesis.speak(utterance);
+    }
+}
+
+function updateStatus(message, type) {
+    const statusDiv = document.getElementById('audioStatus');
+    const iconClass = type === 'recording' ? 'text-red-400' : type === 'processing' ? 'text-yellow-400' : type === 'error' ? 'text-red-400' : 'text-gray-400';
+    
+    statusDiv.innerHTML = `
+        <div class="${iconClass}">
+            <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ${type === 'recording' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>' :
+                  type === 'processing' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>' :
+                  '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>'}
+            </svg>
+            <p>${message}</p>
+        </div>
+    `;
+}
+</script>
+{% endblock %} 
