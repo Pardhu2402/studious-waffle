@@ -10,6 +10,10 @@ This guide provides complete instructions to integrate a real-time sign language
 - **Fallback System**: Video signs → Character spelling → Error handling
 - **Web Interface**: Clean, responsive design with language selection
 
+rbhvfbhfe
+vbhjvberhjbherbf
+fjvbdfhjvbfbhdfbkd
+
 ## Prerequisites
 
 ### Required Vosk Models
